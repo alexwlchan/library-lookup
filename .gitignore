@@ -1,0 +1,4 @@
+*.pyc
+
+books.json
+covers

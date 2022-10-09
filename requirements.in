@@ -1,0 +1,6 @@
+beautifulsoup4==4.9.3
+httpx==0.23.0
+hyperlink==21.0.0
+keyring==21.5.0
+mechanize==0.4.8
+Pillow==9.2.0
