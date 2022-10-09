@@ -51,7 +51,7 @@
 
   .availability {
     background: rgba(141, 172, 27, 0.2);
-    padding: 0.5em;
+    padding: 10px;
     margin-bottom: 3em;
     border-radius: 3px;
   }
@@ -103,6 +103,10 @@
 
   .unavailable td.collection {
     opacity: 0;
+  }
+
+  .no_local_copies .unavailable {
+    display: block;
   }
 
   footer {
@@ -165,6 +169,18 @@
   #selectedBranchCount {
     font-weight: bold;
   }
+
+  .availability p {
+    margin-top: 0;
+  }
+
+  .availability p:last-child {
+    margin-bottom: 0;
+  }
+
+  .availability ul:last-child {
+    margin-bottom: 3px;
+  }
 </style>
 
 <details id="branch_picker">
@@ -182,6 +198,13 @@
   const books = {{ books | tojson }};
 
   function getAvailabilityMessage(availability) {
+    if (availability.locallyAvailableCopies === 1) {
+      return '1 copy nearby';
+    } else if (availability.locallyAvailableCopies > 0) {
+      return `${availability.locallyAvailableCopies} copies nearby`;
+    }
+
+
     if (availability.availableCopies === 0) {
       return 'No copies';
     } else if (availability.availableCopies === 1 && availability.locallyAvailableCopies === 0) {
@@ -189,10 +212,36 @@
     } else if (availability.locallyAvailableCopies === 0) {
       return `${availability.availableCopies} copies`;
     } else if (availability.availableCopies === 1 && availability.locallyAvailableCopies === 1) {
-      return '1 copy, available nearby';
+      return '1 copy, nearby';
     } else {
-      return `${availability.availableCopies} copies, ${availability.locallyAvailableCopies} available nearby`;
+      return `${availability.availableCopies} copies, ${availability.locallyAvailableCopies} nearby`;
     };
+  }
+
+  function getListOfCopies(availability) {
+    return '<ul>' + availability.map(av => `<li>${av.location} / ${av.collection}</li>`).join('') + '</ul>';
+  }
+
+  function getAvailabilityInfo(availability) {
+    if (
+      availability.locallyAvailableCopies === 0 &&
+      availability.availableCopies === 0) {
+      return '<p>No copies available.</p>'
+    } else if (
+      availability.locallyAvailableCopies === 1
+    ) {
+      return '<p><strong>1 copy available nearby.</strong></p>' + getListOfCopies(availability.locallyAvailableLocations);
+    } else if (
+      availability.locallyAvailableCopies > 1
+    ) {
+      return `<p><strong>${availability.locallyAvailableCopies} copies available nearby.</strong></p>` + getListOfCopies(availability.locallyAvailableLocations);
+    } else if (availability.availableCopies === 1) {
+      return `<p>1 copy available in ${availability.availableLocations[0].location}.</p>`
+    } else {
+      return `<p>${availability.availableCopies} copies available in ${availability.availableLocations.map(av => av.location).join(", ")}.</p>`
+    }
+
+    return `<p><strong>Availability:</strong></p> ${JSON.stringify(availability)}`;
   }
 
   function renderBooks() {
@@ -205,10 +254,11 @@
     const bookAvailability = Object.fromEntries(
       books
         .map(function(book) {
-          const locallyAvailableLocations = book.availability_info
-            .filter(av => av.status === 'Available')
-            .filter(av => selectedBranches.includes(av.location))
-            .map(av => av.location);
+          const availableLocations = book.availability_info
+            .filter(av => av.status === 'Available');
+
+          const locallyAvailableLocations = availableLocations
+            .filter(av => selectedBranches.includes(av.location));
 
           const locallyAvailableCopies = locallyAvailableLocations.length;
 
@@ -216,7 +266,7 @@
             .filter(av => av.status === 'Available')
             .length;
 
-          return [book.id, { locallyAvailableCopies, locallyAvailableLocations, availableCopies } ];
+          return [book.id, { locallyAvailableCopies, locallyAvailableLocations, availableLocations, availableCopies } ];
         })
     );
 
@@ -235,9 +285,7 @@
       const title = book.getAttribute('data-book-title');
       const year = book.getAttribute('data-book-year');
 
-      book.querySelector('.availability .availability_message').innerHTML = getAvailabilityMessage(availability);
-
-      book.querySelector('.availability').open = availability.locallyAvailableCopies > 0;
+      book.querySelector('.availability').innerHTML = getAvailabilityInfo(availability);
 
       for (tr of book.querySelectorAll('.availability tr')) {
         if (availability.locallyAvailableLocations.includes(tr.getAttribute('data-av-location')) && tr.getAttribute('data-av-status') === 'Available') {
@@ -313,29 +361,10 @@ document.querySelector('#selectedBranchCount').innerHTML = `(${selectedBranches.
 
       <p class="book_summary">{{ book.summary }}</p>
 
-      <details class="availability">
-        <summary>
-          <strong>Availability:</strong>
-          <span class="availability_message">
-          </span>
-        </summary>
-
-        <table>
-          <tbody>
-            {% for copy in book.availability_info %}
-            <tr
-              {% if copy.status != "Available" %}class="unavailable"{% endif %}
-              data-av-location="{{ copy.location }}"
-              data-av-status="{{ copy.status }}"
-            >
-              <td style="width: 60%;">{{ copy.location }}</td>
-              <td style="width: 15%;" class="collection">{{ copy.collection }}</td>
-              <td style="width: 25%;">{{ copy.status }}</td>
-            </tr>
-            {% endfor %}
-          </tbody>
-        </table>
-      </details>
+      <div class="availability">
+        <strong>Availability:</strong>
+        <div class="availabilityMessage"></div>
+      </div>
     </div>
   </div>
   {% endfor %}
