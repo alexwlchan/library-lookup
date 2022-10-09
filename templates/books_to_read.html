@@ -1,0 +1,346 @@
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+
+  <link rel="apple-touch-icon" href="/apple-touch-icon.png">
+
+  <title>library books I want to read</title>
+</head>
+
+<style>
+  body {
+    max-width: 850px;
+    margin-left:  auto;
+    margin-right: auto;
+    font: 12pt sans-serif;
+    line-height: 1.25em;
+    padding: 1em;
+  }
+
+  h3 {
+    margin-bottom: none;
+    line-height: 1.35em;
+  }
+
+  h2 {
+    line-height: 1.35em;
+  }
+
+  img {
+    margin-right: 1em;
+    height: 150px;
+  }
+
+  .availability table {
+    margin-top: 10px;
+    width: 100%;
+  }
+
+  .availability td {
+    padding-top: 3px;
+  }
+
+  #saved_books > td {
+    padding-top: 1em;
+  }
+
+  th {
+    text-align: left;
+  }
+
+  .availability {
+    background: rgba(141, 172, 27, 0.2);
+    padding: 0.5em;
+    margin-bottom: 3em;
+    border-radius: 3px;
+  }
+
+  a {
+    color: #698014;
+  }
+
+  a:hover {
+    background: rgba(105, 128, 20, 0.2);
+  }
+
+  .no_local_copies a {
+    color: #f1624e;
+  }
+
+  .no_local_copies a:hover {
+    background: rgba(241, 98, 78, 0.2);
+  }
+
+  .no_local_copies .availability {
+    background: rgba(241, 98, 78, 0.2);
+    margin-bottom: 1.5em;
+  }
+
+  .no_local_copies .book_summary {
+    display: none;
+  }
+
+  .no_local_copies h3 {
+    font-size: 1em;
+    margin-top: 0;
+    margin-bottom: 10px;
+  }
+
+  .no_local_copies img {
+    height: 75px;
+  }
+
+  .unavailable {
+    display: none;
+  }
+
+  .unavailable td {
+    opacity: 0.35;
+    font-size: 50%;
+    padding-top: 1px;
+  }
+
+  .unavailable td.collection {
+    opacity: 0;
+  }
+
+  footer {
+    color: #bbb;
+    font-size: small;
+  }
+
+  .book {
+    display: grid;
+    grid-template-columns: 150px auto;
+  }
+
+  .book_cover {
+    grid-column: 1 / 2;
+    text-align: center;
+  }
+
+  .book_metadata {
+    grid-column: 2 / 2;
+  }
+
+  @media screen and (max-width: 500px) {
+    .book {
+      grid-template-columns: auto;
+    }
+
+    .book_cover {
+      grid-column: 1 / 1;
+    }
+
+    .book_metadata {
+      grid-column: 1 / 1
+    }
+
+    .emptyspace {
+      display: none;
+    }
+  }
+
+  #branch_picker {
+    column-count: 3;
+    padding: 10px;
+    background: rgb(241, 242, 242);
+    border: 1px solid rgb(230, 231, 232);
+    border-radius: 5px;
+    margin-bottom: 1em;
+  }
+
+  @media screen and (max-width: 500px) {
+    #branch_picker {
+      column-count: 1;
+    }
+  }
+
+  #branch_picker p {
+    margin-top:    3px;
+    margin-bottom: 3px;
+  }
+
+  #selectedBranchCount {
+    font-weight: bold;
+  }
+</style>
+
+<details id="branch_picker">
+  <summary style="margin-bottom: 5px;">Select branches <span id="selectedBranchCount"></span></summary>
+
+  {% for branch in branches | sort %}
+    <p>
+      <input type="checkbox" name="{{ branch }}" value="{{ branch }}" onchange="renderBooks()">
+      <label for="{{ branch }}">{{ branch }}</label>
+    <p/>
+  {% endfor %}
+</details>
+
+<script>
+  const books = {{ books | tojson }};
+
+  function getAvailabilityMessage(availability) {
+    if (availability.availableCopies === 0) {
+      return 'No copies';
+    } else if (availability.availableCopies === 1 && availability.locallyAvailableCopies === 0) {
+      return `${availability.availableCopies} copy`;
+    } else if (availability.locallyAvailableCopies === 0) {
+      return `${availability.availableCopies} copies`;
+    } else if (availability.availableCopies === 1 && availability.locallyAvailableCopies === 1) {
+      return '1 copy, available nearby';
+    } else {
+      return `${availability.availableCopies} copies, ${availability.locallyAvailableCopies} available nearby`;
+    };
+  }
+
+  function renderBooks() {
+    const selectedBranches =
+      Array.from(document.querySelectorAll('#branch_picker input'))
+        .filter(input => input.checked)
+        .map(input => input.value);
+
+    // Build a tally { bookId => how many available copies }
+    const bookAvailability = Object.fromEntries(
+      books
+        .map(function(book) {
+          const locallyAvailableLocations = book.availability_info
+            .filter(av => av.status === 'Available')
+            .filter(av => selectedBranches.includes(av.location))
+            .map(av => av.location);
+
+          const locallyAvailableCopies = locallyAvailableLocations.length;
+
+          const availableCopies = book.availability_info
+            .filter(av => av.status === 'Available')
+            .length;
+
+          return [book.id, { locallyAvailableCopies, locallyAvailableLocations, availableCopies } ];
+        })
+    );
+
+    // Go through each book, and work out how many of its copies are
+    // available.  Store these in a list [<book>, count]
+    let updatedBooks = [];
+    for (book of document.querySelectorAll('#books .book')) {
+      const availability = bookAvailability[book.getAttribute('data-book-id')];
+
+      if (availability.locallyAvailableCopies === 0) {
+        book.classList.add("no_local_copies");
+      } else {
+        book.classList.remove("no_local_copies");
+      }
+
+      const title = book.getAttribute('data-book-title');
+      const year = book.getAttribute('data-book-year');
+
+      book.querySelector('.availability .availability_message').innerHTML = getAvailabilityMessage(availability);
+
+      book.querySelector('.availability').open = availability.locallyAvailableCopies > 0;
+
+      for (tr of book.querySelectorAll('.availability tr')) {
+        if (availability.locallyAvailableLocations.includes(tr.getAttribute('data-av-location')) && tr.getAttribute('data-av-status') === 'Available') {
+          tr.classList.remove('unavailable');
+        } else {
+          tr.classList.add('unavailable');
+        }
+      }
+
+      updatedBooks.push({ book, title, year, locallyAvailableCopies: availability.locallyAvailableCopies });
+    }
+
+    // Sort the books so those with the most copies are at the top.
+    // If two books have the same number of copies, arbitrarily sort
+    // by title.
+    updatedBooks.sort(function(a, b) {
+      if (a.locallyAvailableCopies === b.locallyAvailableCopies && a.title === b.title) {
+        return Number(b.year) - Number(a.year)
+      } else if (a.locallyAvailableCopies === b.locallyAvailableCopies) {
+        return a.title > b.title ? 1 : -1;
+      } else {
+        return b.locallyAvailableCopies - a.locallyAvailableCopies;
+      }
+    });
+
+    let elements = document.createDocumentFragment();
+    for (book of updatedBooks) {
+      elements.appendChild(book.book.cloneNode(true));
+    }
+
+    document.querySelector('#books').innerHTML = null;
+    document.querySelector('#books').appendChild(elements);
+
+    for (book of document.querySelectorAll('#books .book')) {
+      book.style.display = "grid";
+    }
+
+    if (selectedBranches.length > 0) {
+document.querySelector('#selectedBranchCount').innerHTML = `(${selectedBranches.length} selected)`
+    } else {
+      document.querySelector('#selectedBranchCount').innerHTML = '';
+    }
+  }
+
+  window.onload = function() {
+    const branchesInQuery = new URLSearchParams(document.location.search).getAll('branch');
+
+    if (branchesInQuery.length > 0) {
+      for (input of document.querySelectorAll("input")) {
+        if (branchesInQuery.includes(input.getAttribute("name"))) {
+          input.checked = true;
+        }
+      }
+    } else {
+      // If no branches are selected, open the branch picker
+      document.querySelector("#branch_picker").open = true;
+    }
+
+    renderBooks();
+  };
+</script>
+
+<div id="books">
+  {% for book in books %}
+  <div class="book" data-book-id="{{ book.id }}" data-book-title="{{ book.title }}" data-book-year="{{ book.year }}" style="display: none;">
+    <div class="book_cover">
+      {% if book.image != None %}
+        <img src="{{ book.image }}">
+      {% endif %}
+    </div>
+    <div class="book_metadata">
+      <h3><a href="{{ book.url }}">{{ book.title }}</a>, by {{ book.author }} ({{ book.year }})</h3>
+
+      <p class="book_summary">{{ book.summary }}</p>
+
+      <details class="availability">
+        <summary>
+          <strong>Availability:</strong>
+          <span class="availability_message">
+          </span>
+        </summary>
+
+        <table>
+          <tbody>
+            {% for copy in book.availability_info %}
+            <tr
+              {% if copy.status != "Available" %}class="unavailable"{% endif %}
+              data-av-location="{{ copy.location }}"
+              data-av-status="{{ copy.status }}"
+            >
+              <td style="width: 60%;">{{ copy.location }}</td>
+              <td style="width: 15%;" class="collection">{{ copy.collection }}</td>
+              <td style="width: 25%;">{{ copy.status }}</td>
+            </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </details>
+    </div>
+  </div>
+  {% endfor %}
+</div>
+
+<footer>
+  Generated at {{ now.strftime('%A %d %B %Y at %H:%M:%S') }}
+</footer>

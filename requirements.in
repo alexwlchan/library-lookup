@@ -4,3 +4,4 @@ hyperlink==21.0.0
 keyring==21.5.0
 mechanize==0.4.8
 Pillow==9.2.0
+Jinja2==2.11.3
