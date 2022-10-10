@@ -3,6 +3,7 @@
 import datetime
 import json
 import os
+import re
 import secrets
 import shutil
 
@@ -12,9 +13,19 @@ from jinja2 import Environment, FileSystemLoader, select_autoescape
 
 def display_author_name(label):
     try:
+        # e.g. Steele, John
         last_name, first_name = label.split(',')
         return f'{first_name.strip()} {last_name.strip()}'
     except ValueError:
+        # e.g. Kawaguchi, Toshikazu, 1971-
+        # Le Guin, Ursula K., 1929-2018
+        try:
+            last_name, first_name, dates = label.split(',')
+            if re.match(r'^\d{4}\-(?:\d{4})?$', dates.strip()):
+                return f'{first_name.strip()} {last_name.strip()}'
+        except ValueError:
+            pass
+
         return label
 
 
