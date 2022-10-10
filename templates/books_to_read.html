@@ -185,7 +185,20 @@
   }
 
   function getListOfCopies(availability) {
-    return '<ul>' + availability.map(av => `<li>${av.location} / ${av.collection}</li>`).join('') + '</ul>';
+    const talliedAvailability = availability
+      .map(av => `${av.location} / ${av.collection}`)
+      .reduce((tally, av) => {
+          tally[av] = (tally[av] || 0) + 1;
+          return tally;
+      }, {});
+
+    const labels = Object.entries(talliedAvailability)
+      .map(entry => {
+        const [label, count] = entry;
+        return count > 1 ? `${label} (&times;&thinsp;${count})` : label;
+      });
+
+    return '<ul>' + labels.map(lab => `<li>${lab}</li>`).join('') + '</ul>';
   }
 
   function getAvailabilityInfo(availability) {
