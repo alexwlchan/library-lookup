@@ -52,7 +52,9 @@ function getAvailabilityInfo(availability) {
   } else if (availability.availableCopies === 1) {
     return `<p>1 copy available in ${availability.availableLocations[0].location}.</p>`
   } else {
-    return `<p>${availability.availableCopies} copies available in ${availability.availableLocations.map(av => av.location).join(", ")}.</p>`
+    const locations = Array.from(new Set(availability.availableLocations.map(av => av.location)));
+    locations.sort();
+    return `<p>${availability.availableCopies} copies available in ${locations.join(", ")}.</p>`
   }
 
   return `<p><strong>Availability:</strong></p> ${JSON.stringify(availability)}`;
