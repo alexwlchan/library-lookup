@@ -43,3 +43,6 @@ if __name__ == "__main__":
 
     for f in os.listdir('covers'):
         shutil.copyfile(os.path.join('covers', f), os.path.join('_html/covers', f))
+
+    shutil.copyfile('templates/library_lookup.js', '_html/library_lookup.js')
+    shutil.copyfile('templates/style.css', '_html/style.css')
