@@ -11,6 +11,7 @@ import httpx
 import hyperlink
 import keyring
 import mechanize
+import tqdm
 from unidecode import unidecode
 from PIL import Image
 
@@ -190,17 +191,17 @@ if __name__ == "__main__":
         mechanize._http.HTTPRefreshProcessor(), max_time=1, honor_time=True
     )
 
-    fieldsets = get_all_books_in_default_list(
+    fieldsets = list(get_all_books_in_default_list(
         browser, base_url=base_url, username=username, password=password
-    )
+    ))
 
     books = [
         book
         for (_, book)
-        in concurrently(
+        in tqdm.tqdm(concurrently(
             lambda fs: get_book_info(fs, browser=browser, base_url=base_url),
             fieldsets
-        )
+        ), total=len(fieldsets))
     ]
 
     with open("books.json", "w") as out_file:
