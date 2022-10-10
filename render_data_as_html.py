@@ -10,6 +10,14 @@ import jinja2
 from jinja2 import Environment, FileSystemLoader, select_autoescape
 
 
+def display_author_name(label):
+    try:
+        last_name, first_name = label.split(',')
+        return f'{first_name.strip()} {last_name.strip()}'
+    except ValueError:
+        return label
+
+
 if __name__ == "__main__":
     books = json.load(open("books.json"))
 
@@ -26,6 +34,8 @@ if __name__ == "__main__":
         autoescape=select_autoescape(),
         undefined=jinja2.StrictUndefined,
     )
+
+    env.filters['author_name'] = display_author_name
 
     template = env.get_template("books_to_read.html")
 

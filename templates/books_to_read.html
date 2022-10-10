@@ -52,7 +52,7 @@
       {% endif %}
     </div>
     <div class="book_metadata">
-      <h3><a href="{{ book.url }}">{{ book.title }}</a>, by {{ book.author }} ({{ book.year }})</h3>
+      <h3><a href="{{ book.url }}">{{ book.title }}</a>, by {{ book.author | author_name }} ({{ book.year }})</h3>
 
       <p class="book_summary">{{ book.summary }}</p>
 
