@@ -1,0 +1,14 @@
+name: build_site
+
+on:
+  push:
+    branches:
+    - "main"
+
+jobs:
+  build:
+    name: Build the website
+    runs-on: ubuntu-latest
+    steps:
+      - name: "install dependencies"
+        run: pip3 install -r requirements.txt
