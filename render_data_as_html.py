@@ -67,4 +67,4 @@ if __name__ == "__main__":
 
     shutil.copyfile('assets/library_lookup.js', '_html/library_lookup.js')
     shutil.copyfile('assets/style.css', '_html/style.css')
-    shutil.copyfile('assets/apple-touch-icon.png', '_html/style.css')
+    shutil.copyfile('assets/apple-touch-icon.png', '_html/apple-touch-icon.png')
