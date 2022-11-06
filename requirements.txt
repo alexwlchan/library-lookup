@@ -50,5 +50,7 @@ soupsieve==2.3.2.post1
     # via beautifulsoup4
 tqdm==4.54.0
     # via -r requirements.in
+unidecode==1.2.0
+    # via -r requirements.in
 webencodings==0.5.1
     # via html5lib
