@@ -10,5 +10,5 @@ jobs:
     name: Build the website
     runs-on: ubuntu-latest
     steps:
-      - name: "install dependencies"
-        run: pip3 install -r requirements.txt
+      - name: "Install dependencies"
+        run: pwd
