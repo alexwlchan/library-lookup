@@ -37,8 +37,8 @@
 
   {% for branch in branches | sort %}
     <p>
-      <input type="checkbox" name="{{ branch }}" value="{{ branch }}" onchange="renderBooks()">
-      <label for="{{ branch }}">{{ branch }}</label>
+      <input id="branch-{{ branch }}" type="checkbox" name="{{ branch }}" value="{{ branch }}" onchange="renderBooks()">
+      <label for="branch-{{ branch }}">{{ branch }}</label>
     <p/>
   {% endfor %}
 </details>
