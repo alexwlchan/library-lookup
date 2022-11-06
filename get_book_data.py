@@ -179,8 +179,12 @@ def get_availability_info(html):
 
 
 if __name__ == "__main__":
-    username = keyring.get_password("library", "username")
-    password = keyring.get_password("library", "password")
+    if os.environ.get("CI") == "true":
+        username = os.environ["LIBRARY_CARD_NUMBER"]
+        password = os.environ["LIBRARY_CARD_PASSWORD"]
+    else:
+        username = keyring.get_password("library", "username")
+        password = keyring.get_password("library", "password")
 
     base_url = "https://herts.spydus.co.uk"
 

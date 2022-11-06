@@ -10,8 +10,17 @@ jobs:
     name: Build the website
     runs-on: ubuntu-latest
     steps:
-      - name: "Install dependencies"
-        run: pwd
+      - name: "Check out the repo"
+        uses: actions/checkout@v2
 
-      - name: "list directory"
-        run: ls
+      - name: "Install dependencies"
+        run: pip3 install -r requirements.txt
+
+      - name: "Get the book data"
+        run: python3 get_book_data.py
+        env:
+          LIBRARY_CARD_NUMBER: ${{ secrets.LIBRARY_CARD_NUMBER }}
+          LIBRARY_CARD_PASSWORD: ${{ secrets.LIBRARY_CARD_PASSWORD }}
+
+      - name: "Render the data as HTML"
+        run: python3 render_data_as_html.py
