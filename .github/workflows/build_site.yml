@@ -24,3 +24,11 @@ jobs:
 
       - name: "Render the data as HTML"
         run: python3 render_data_as_html.py
+
+      - name: "Install the Netlify CLI"
+        run: npm install -g netlify-cli
+
+      - name: "Deploy to Netlify"
+        run: netlify deploy --dir=_html/ --prod
+        env:
+          NETLIFY_AUTH_TOKEN: ${{ secrets.NETLIFY_AUTH_TOKEN }}
