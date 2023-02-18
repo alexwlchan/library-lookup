@@ -161,10 +161,11 @@ def get_availability_info(html):
             ("location", "Location"),
             ("collection", "Collection"),
             ("status", "Status/Desc"),
+            ("call_number", "Call number"),
         ]
 
         info = {
-            key: row.find("td", attrs={"data-caption": caption}).text
+            key: row.find("td", attrs={"data-caption": caption}).text if row.find("td", attrs={"data-caption": caption}) else ""
             for (key, caption) in fields
         }
 

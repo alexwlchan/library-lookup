@@ -21,7 +21,11 @@ function getAvailabilityMessage(availability) {
 
 function getListOfCopies(availability) {
   const talliedAvailability = availability
-    .map(av => `${av.location} / ${av.collection}`)
+    .map(av =>
+      av.call_number !== ""
+        ? `${av.location} / ${av.collection} / ${av.call_number}`
+        : `${av.location} / ${av.collection}`
+    )
     .reduce((tally, av) => {
         tally[av] = (tally[av] || 0) + 1;
         return tally;
