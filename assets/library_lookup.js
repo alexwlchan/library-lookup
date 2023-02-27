@@ -41,27 +41,37 @@ function getListOfCopies(availability) {
 }
 
 function getAvailabilityInfo(availability) {
-  if (
-    availability.locallyAvailableCopies === 0 &&
-    availability.availableCopies === 0) {
-    return '<p>No copies available.</p>'
-  } else if (
-    availability.locallyAvailableCopies === 1
-  ) {
-    return '<p><strong>1 copy available nearby.</strong></p>' + getListOfCopies(availability.locallyAvailableLocations);
-  } else if (
-    availability.locallyAvailableCopies > 1
-  ) {
-    return `<p><strong>${availability.locallyAvailableCopies} copies available nearby.</strong></p>` + getListOfCopies(availability.locallyAvailableLocations);
-  } else if (availability.availableCopies === 1) {
-    return `<p>1 copy available in ${availability.availableLocations[0].location}.</p>`
-  } else {
-    const locations = Array.from(new Set(availability.availableLocations.map(av => av.location)));
-    locations.sort();
-    return `<p>${availability.availableCopies} copies available in ${locations.join(", ")}.</p>`
+  if (availability.locallyAvailableCopies === 0) {
+    switch(availability.availableCopies) {
+      case 0:
+        return '<p>No copies available.</p>';
+      case 1:
+        return `<p>1 copy available in ${availability.availableLocations[0].location}.</p>`;
+      default:
+        const locations = Array.from(new Set(availability.availableLocations.map(av => av.location)));
+        locations.sort();
+        return `<p>${availability.availableCopies} copies available in ${locations.join(", ")}.</p>`;
+    }
   }
 
-  return `<p><strong>Availability:</strong></p> ${JSON.stringify(availability)}`;
+  const availabilityMessage =
+    availability.locallyAvailableCopies === 1
+      ? '<p><strong>1 copy available nearby.</strong></p>' + getListOfCopies(availability.locallyAvailableLocations)
+      : `<p><strong>${availability.locallyAvailableCopies} copies available nearby.</strong></p>` + getListOfCopies(availability.locallyAvailableLocations);
+
+  const extraLocations =
+    availability.availableLocations.filter(av =>
+      availability.locallyAvailableLocations.indexOf(av) === -1
+    ).map(av => av.location);
+
+  switch (extraLocations.length) {
+    case 0:
+      return availabilityMessage;
+    case 1:
+      return `${availabilityMessage}<p>plus 1 more copy in ${extraLocations.join(", ")}.</p>`
+    default:
+      return `${availabilityMessage}<p>plus ${extraLocations.length} more copies in ${extraLocations.join(", ")}.</p>`
+  }
 }
 
 function renderBooks() {
