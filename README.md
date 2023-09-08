@@ -6,7 +6,7 @@ It shows me a list of books I can borrow immediately:
 
 ![A list of books. The first two books have large titles, a summary, and a list of branches where copies are available for immediate borrowing. There are two more books which are shown in smaller text and with greyed-out covers -- these aren't available nearby.](screenshot.png)
 
-I don't expect anybody else will want to use this tool directly, but some of the ideas might be reusable.
+I don't expect anybody else will want to use this exact tool, but some of the ideas might be reusable.
 
 How it works:
 
