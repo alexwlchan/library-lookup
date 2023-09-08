@@ -2,7 +2,7 @@
 
 This is a tool for finding books that are available in nearby branches of my public lending library.
 
-It gives me a list of books I can borrow immediately:
+It shows me a list of books I can borrow immediately:
 
 ![A list of books. The first two books have large titles, a summary, and a list of branches where copies are available for immediate borrowing. There are two more books which are shown in smaller text and with greyed-out covers -- these aren't available nearby.](screenshot.png)
 
