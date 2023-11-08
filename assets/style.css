@@ -18,7 +18,7 @@ h2 {
 
 img {
   margin-right: 1em;
-  height: 150px;
+  height: 180px;
 }
 
 .availability {
@@ -71,7 +71,7 @@ footer {
 
 .book {
   display: grid;
-  grid-template-columns: 150px auto;
+  grid-template-columns: 180px auto;
 }
 
 .book_cover {
