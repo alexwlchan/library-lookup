@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 
 import base64
+import datetime
 import io
 import json
 import os
@@ -50,7 +51,7 @@ def get_all_books_in_default_list(browser, *, base_url, username, password):
                 if "Next page of search results" in anchor.text
             )
 
-            response = browser.open(base_url + next_page.attrs['href'])
+            response = browser.open(base_url + next_page.attrs["href"])
         except StopIteration:
             break
 
@@ -165,7 +166,9 @@ def get_availability_info(html):
         ]
 
         info = {
-            key: row.find("td", attrs={"data-caption": caption}).text if row.find("td", attrs={"data-caption": caption}) else ""
+            key: row.find("td", attrs={"data-caption": caption}).text
+            if row.find("td", attrs={"data-caption": caption})
+            else ""
             for (key, caption) in fields
         }
 
@@ -196,18 +199,28 @@ if __name__ == "__main__":
         mechanize._http.HTTPRefreshProcessor(), max_time=1, honor_time=True
     )
 
-    fieldsets = list(get_all_books_in_default_list(
-        browser, base_url=base_url, username=username, password=password
-    ))
+    fieldsets = list(
+        get_all_books_in_default_list(
+            browser, base_url=base_url, username=username, password=password
+        )
+    )
 
     books = [
         book
-        for (_, book)
-        in tqdm.tqdm(concurrently(
-            lambda fs: get_book_info(fs, browser=browser, base_url=base_url),
-            fieldsets
-        ), total=len(fieldsets))
+        for (_, book) in tqdm.tqdm(
+            concurrently(
+                lambda fs: get_book_info(fs, browser=browser, base_url=base_url),
+                fieldsets,
+            ),
+            total=len(fieldsets),
+        )
     ]
 
     with open("books.json", "w") as out_file:
-        out_file.write(json.dumps(books, indent=2, sort_keys=True))
+        out_file.write(
+            json.dumps(
+                {"generated_at": datetime.datetime.now().isoformat(), "books": books},
+                indent=2,
+                sort_keys=True,
+            )
+        )
