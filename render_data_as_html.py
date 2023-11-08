@@ -35,7 +35,7 @@ if __name__ == "__main__":
     # Get a tally of all the branches in the Hertfordshire network
     branches = set()
     for book in book_data["books"]:
-        for av in book["availability_info"]:
+        for av in book["availability"]:
             if av["status"] == "Available":
                 branches.add(av["location"])
 

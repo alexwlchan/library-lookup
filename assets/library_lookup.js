@@ -84,7 +84,7 @@ function renderBooks() {
   const bookAvailability = Object.fromEntries(
     books
       .map(function(book) {
-        const availableLocations = book.availability_info
+        const availableLocations = book.availability
           .filter(av => av.status === 'Available');
 
         const locallyAvailableLocations = availableLocations
@@ -92,7 +92,7 @@ function renderBooks() {
 
         const locallyAvailableCopies = locallyAvailableLocations.length;
 
-        const availableCopies = book.availability_info
+        const availableCopies = book.availability
           .filter(av => av.status === 'Available')
           .length;
 
