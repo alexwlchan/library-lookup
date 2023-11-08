@@ -7,3 +7,4 @@ hyperlink==21.0.0
 keyring==21.5.0
 mechanize==0.4.8
 tqdm==4.54.0
+wcag_contrast_ratio

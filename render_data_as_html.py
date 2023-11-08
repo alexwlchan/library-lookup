@@ -10,6 +10,8 @@ import shutil
 import jinja2
 from jinja2 import Environment, FileSystemLoader, select_autoescape
 
+from tint_colors import choose_tint_color_for_file, from_hex
+
 
 def display_author_name(label):
     try:
@@ -29,6 +31,11 @@ def display_author_name(label):
         return label
 
 
+def rgba(hs, opacity):
+    r, g, b = from_hex(hs)
+    return f"rgba({r}, {g}, {b}, {opacity})"
+
+
 if __name__ == "__main__":
     book_data = json.load(open("books.json"))
 
@@ -39,6 +46,9 @@ if __name__ == "__main__":
             if av["status"] == "Available":
                 branches.add(av["location"])
 
+        if book["image"]:
+            book["tint_color"] = choose_tint_color_for_file(book["image"])
+
     # Set up the Jinja environment
     env = Environment(
         loader=FileSystemLoader("templates"),
@@ -47,6 +57,7 @@ if __name__ == "__main__":
     )
 
     env.filters["author_name"] = display_author_name
+    env.filters["rgba"] = rgba
 
     template = env.get_template("books_to_read.html")
 

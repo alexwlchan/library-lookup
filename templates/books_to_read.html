@@ -30,6 +30,24 @@
       renderBooks();
     };
   </script>
+
+  <style>
+  {% for book in books %}
+    {% if book.tint_color is defined %}
+      div[data-book-id="{{ book.id }}"] a {
+        color: {{ book.tint_color }};
+      }
+
+      div[data-book-id="{{ book.id }}"] a:hover {
+        background: {{ book.tint_color | rgba(opacity=0.2) }};
+      }
+
+      div[data-book-id="{{ book.id }}"] .availability {
+        background: {{ book.tint_color | rgba(opacity=0.2) }};
+      }
+    {% endif %}
+  {% endfor %}
+  </style>
 </head>
 
 <details id="branch_picker">
