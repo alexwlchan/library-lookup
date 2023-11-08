@@ -81,7 +81,13 @@
           <div class="book_metadata">
             <h3>
               <a href="{{ book.record_details['Bookmark link'] }}">{{ book.title }}</a>,
-              by {{ book.author | author_name }} ({{ book.publication_year }})
+              by {{ book.author | author_name }}
+              (
+                {{- book.publication_year -}}
+                {%- if unique_titles[(book['title'], book['author'])] > 1 and book.format is defined -%}
+                , {{ book.format }}
+                {%- endif -%}
+              )
             </h3>
 
             <p class="book_summary">{{ book.summary }}</p>

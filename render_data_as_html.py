@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
 
+import collections
 import datetime
 import json
 import os
@@ -46,8 +47,11 @@ if __name__ == "__main__":
             if av["status"] == "Available":
                 branches.add(av["location"])
 
-        if book["image"]:
-            book["tint_color"] = choose_tint_color_for_file(book["image"])
+    # Get a tally of all the (title, author_name) pairs
+    unique_titles = collections.Counter()
+
+    for book in book_data['books']:
+        unique_titles[(book['title'], book['author'])] += 1
 
     # Set up the Jinja environment
     env = Environment(
@@ -66,11 +70,22 @@ if __name__ == "__main__":
     for b in book_data["books"]:
         b["id"] = str(secrets.token_hex())
 
+        if b["image"]:
+            b["tint_color"] = choose_tint_color_for_file(book["image"])
+
+        if "pbk" in b["record_details"].get("ISBN", ""):
+            b['format'] = 'paperback'
+        elif 'hbk' in b["record_details"].get("ISBN", ""):
+            b['format'] = 'hardback'
+        else:
+            b['format'] = None
+
     with open("_html/index.html", "w") as outfile:
         outfile.write(
             template.render(
                 books=book_data["books"],
                 branches=branches,
+                unique_titles=unique_titles,
                 generated_at=datetime.datetime.fromisoformat(book_data["generated_at"]),
             )
         )
