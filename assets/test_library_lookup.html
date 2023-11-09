@@ -44,13 +44,17 @@
       availableLocations: [],
     });
 
-    assertEqual(result, '<p><strong>1 copy available nearby.</strong></p><ul><li>Ware Library / Fiction / General fiction pbk</li></ul>');
+    assertEqual(
+      result,
+      '<p><strong>1 copy available nearby.</strong></p>' +
+      '<ul><li>Ware Library / Fiction / General fiction pbk</li></ul>'
+    );
   });
 
   it('getAvailabilityInfo: one copy available locally plus some others elsewhere', () => {
     const result = getAvailabilityInfo({
       locallyAvailableCopies: 1,
-      availableCopies: 2,
+      availableCopies: 3,
       locallyAvailableLocations: [
         {
           location: 'Ware Library',
@@ -68,7 +72,11 @@
       ]
     });
 
-    assertEqual(result, '<p><strong>1 copy available nearby.</strong></p><ul><li>Ware Library / Fiction / General fiction pbk</li></ul><p>plus 2 more copies in Oakmere, Radlett.</p>');
+    assertEqual(result,
+      '<p><strong>1 copy available nearby.</strong></p>' +
+      '<ul><li>Ware Library / Fiction / General fiction pbk</li></ul>' +
+      '<p>plus 3 more copies in Oakmere and Radlett.</p>'
+    );
   });
 
   it('getAvailabilityInfo: one copy available elsewhere', () => {
@@ -101,6 +109,21 @@
       ]
     });
 
-    assertEqual(result, '<p>2 copies available in Oakmere, Radlett.</p>');
+    assertEqual(result, '<p>2 copies available in Oakmere and Radlett.</p>');
+  });
+
+  it('getAvailabilityInfo: many copies available elsewhere', () => {
+    const result = getAvailabilityInfo({
+      locallyAvailableCopies: 0,
+      availableCopies: 5,
+      locallyAvailableLocations: [],
+      availableLocations: [
+        { location: 'Oakmere Library' },
+        { location: 'Radlett Library' },
+        { location: 'Stevenage Library' },
+      ]
+    });
+
+    assertEqual(result, '<p>5 copies available in Oakmere, Radlett and Stevenage.</p>');
   });
 </script>

@@ -61,14 +61,21 @@ function getAvailabilityInfo(availability) {
 
   extraLocations.sort();
 
+  const extraLocationMessage =
+    extraLocations.length === 1
+      ? extraLocations[0]
+      : extraLocations.length == 2
+      ? `${extraLocations[0]} and ${extraLocations[1]}`
+      : `${extraLocations.slice(0, extraLocations.length - 1).join(", ")} and ${extraLocations[extraLocations.length - 1]}`;
+
   if (availability.locallyAvailableCopies === 0) {
     switch(availability.availableCopies) {
       case 0:
         return '<p>No copies available.</p>';
       case 1:
-        return `<p>1 copy available in ${availability.availableLocations[0].location}.</p>`;
+        return `<p>1 copy available in ${extraLocationMessage}.</p>`;
       default:
-        return `<p>${availability.availableCopies} copies available in ${extraLocations.join(", ")}.</p>`;
+        return `<p>${availability.availableCopies} copies available in ${extraLocationMessage}.</p>`;
     }
   }
 
@@ -77,13 +84,13 @@ function getAvailabilityInfo(availability) {
       ? '<p><strong>1 copy available nearby.</strong></p>' + getListOfCopies(availability.locallyAvailableLocations)
       : `<p><strong>${availability.locallyAvailableCopies} copies available nearby.</strong></p>` + getListOfCopies(availability.locallyAvailableLocations);
 
-  switch (extraLocations.length) {
+  switch (availability.availableCopies) {
     case 0:
       return availabilityMessage;
     case 1:
-      return `${availabilityMessage}<p>plus 1 more copy in ${extraLocations.join(", ")}.</p>`
+      return `${availabilityMessage}<p>plus 1 more copy in ${extraLocationMessage}.</p>`
     default:
-      return `${availabilityMessage}<p>plus ${extraLocations.length} more copies in ${extraLocations.join(", ")}.</p>`
+      return `${availabilityMessage}<p>plus ${availability.availableCopies} more copies in ${extraLocationMessage}.</p>`
   }
 }
 
