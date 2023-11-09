@@ -317,10 +317,15 @@ class LibraryBrowser:
         #       <span class="d-block">Anna Hart is a seasoned …</span>
         #     </div>
         #
-        record_details['Summary'] = [
-            span.getText()
-            for span in soup.find("div", attrs={"id": "divtabSUMMARY"}).find_all("span")
-        ]
+        try:
+            record_details["Summary"] = [
+                span.getText()
+                for span in soup.find("div", attrs={"id": "divtabSUMMARY"}).find_all(
+                    "span"
+                )
+            ]
+        except AttributeError:
+            record_details["Summary"] = []
 
         return record_details
 
