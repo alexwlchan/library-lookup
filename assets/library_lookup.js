@@ -100,6 +100,9 @@ function renderBooks() {
       .filter(input => input.checked)
       .map(input => input.value);
 
+  // Store the list of selected branches in localStorage
+  window.localStorage.setItem("branchesSelected", JSON.stringify(selectedBranches));
+
   // Build a tally { bookId => how many available copies }
   const bookAvailability = Object.fromEntries(
     books
