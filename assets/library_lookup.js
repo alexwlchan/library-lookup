@@ -40,7 +40,27 @@ function getListOfCopies(availability) {
   return '<ul>' + labels.map(lab => `<li>${lab}</li>`).join('') + '</ul>';
 }
 
+/* https://stackoverflow.com/q/1960473/1558022 */
+function onlyUnique(value, index, array) {
+  return array.indexOf(value) === index;
+}
+
 function getAvailabilityInfo(availability) {
+  const extraLocations =
+    availability.availableLocations
+      .filter(av => availability.locallyAvailableLocations.indexOf(av) === -1)
+      .map(av => av.location)
+      .map(location =>
+        location.endsWith(' Community Library')
+          ? location
+          : location.endsWith(' Library')
+          ? location.replace(/ Library$/, '')
+          : location
+      )
+      .filter(onlyUnique);
+
+  extraLocations.sort();
+
   if (availability.locallyAvailableCopies === 0) {
     switch(availability.availableCopies) {
       case 0:
@@ -48,9 +68,7 @@ function getAvailabilityInfo(availability) {
       case 1:
         return `<p>1 copy available in ${availability.availableLocations[0].location}.</p>`;
       default:
-        const locations = Array.from(new Set(availability.availableLocations.map(av => av.location)));
-        locations.sort();
-        return `<p>${availability.availableCopies} copies available in ${locations.join(", ")}.</p>`;
+        return `<p>${availability.availableCopies} copies available in ${extraLocations.join(", ")}.</p>`;
     }
   }
 
@@ -58,11 +76,6 @@ function getAvailabilityInfo(availability) {
     availability.locallyAvailableCopies === 1
       ? '<p><strong>1 copy available nearby.</strong></p>' + getListOfCopies(availability.locallyAvailableLocations)
       : `<p><strong>${availability.locallyAvailableCopies} copies available nearby.</strong></p>` + getListOfCopies(availability.locallyAvailableLocations);
-
-  const extraLocations =
-    availability.availableLocations.filter(av =>
-      availability.locallyAvailableLocations.indexOf(av) === -1
-    ).map(av => av.location);
 
   switch (extraLocations.length) {
     case 0:
