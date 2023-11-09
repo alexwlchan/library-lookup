@@ -210,21 +210,6 @@ class LibraryBrowser:
             author = recdetail_spans[0].getText()
             publication_year = recdetail_spans[1].getText()
 
-        # The summary is in a block like:
-        #
-        #     <div class="card-text summary">
-        #       When Jem Rosco - sailor, adventurer and local legend -
-        #       …
-        #     </div>
-        #
-        # Note that not all books have a summary, in which case this
-        # element is missing.
-        summary_elem = fieldset.find("div", attrs={"class": "summary"})
-        if summary_elem is None:
-            summary = None
-        else:
-            summary = summary_elem.getText().strip()
-
         # There's a link to the availability popover:
         #
         #     <div class="card-text availability">
@@ -244,7 +229,6 @@ class LibraryBrowser:
             "image": image,
             "author": author,
             "publication_year": publication_year,
-            "summary": summary,
             "availability": availability,
         }
 
@@ -325,6 +309,18 @@ class LibraryBrowser:
                     print(f"Record detail had multiple entries for {key}: {url}")
 
             record_details[key] = value
+
+        # There's also a summary on the page, which unlike the search
+        # results, isn't truncated.  e.g.
+        #
+        #     <div id="divtabSUMMARY" class="tab-container-body-inner">
+        #       <span class="d-block">Anna Hart is a seasoned …</span>
+        #     </div>
+        #
+        record_details['Summary'] = [
+            span.getText()
+            for span in soup.find("div", attrs={"id": "divtabSUMMARY"}).find_all("span")
+        ]
 
         return record_details
 
