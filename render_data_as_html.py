@@ -71,7 +71,7 @@ if __name__ == "__main__":
         b["id"] = str(secrets.token_hex())
 
         if b["image"]:
-            b["tint_color"] = choose_tint_color_for_file(book["image"])
+            b["tint_color"] = choose_tint_color_for_file(b["image"])
 
         if "pbk" in b["record_details"].get("ISBN", ""):
             b['format'] = 'paperback'
