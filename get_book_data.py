@@ -196,7 +196,10 @@ class LibraryBrowser:
         recdetail_div = fieldset.find("div", attrs={"class": "recdetails"})
         recdetail_spans = recdetail_div.find_all("span")
 
-        if title == "Ursula K. Le Guin : voyager to inner lands and to outer space" and len(recdetail_spans) == 1:
+        if (
+            title == "Ursula K. Le Guin : voyager to inner lands and to outer space"
+            and len(recdetail_spans) == 1
+        ):
             author = "Ursula K. Le Guin"
             title = "Voyager to Inner Lands and to Outer Space"
             publication_year = "1979"
