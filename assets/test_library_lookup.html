@@ -22,7 +22,9 @@
   it('getAvailabilityInfo: no copies available', () => {
     const result = getAvailabilityInfo({
       locallyAvailableCopies: 0,
-      availableCopies: 0
+      availableCopies: 0,
+      locallyAvailableLocations: [],
+      availableLocations: [],
     });
 
     assertEqual(result, '<p>No copies available.</p>');
@@ -66,7 +68,7 @@
       ]
     });
 
-    assertEqual(result, '<p><strong>1 copy available nearby.</strong></p><ul><li>Ware Library / Fiction / General fiction pbk</li></ul><p>plus 2 more copies in Oakmere Library, Radlett Library.</p>');
+    assertEqual(result, '<p><strong>1 copy available nearby.</strong></p><ul><li>Ware Library / Fiction / General fiction pbk</li></ul><p>plus 2 more copies in Oakmere, Radlett.</p>');
   });
 
   it('getAvailabilityInfo: one copy available elsewhere', () => {
@@ -99,6 +101,6 @@
       ]
     });
 
-    assertEqual(result, '<p>2 copies available in Oakmere Library, Radlett Library.</p>');
+    assertEqual(result, '<p>2 copies available in Oakmere, Radlett.</p>');
   });
 </script>
