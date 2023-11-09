@@ -17,22 +17,32 @@ jobs:
       - name: "Check out the repo"
         uses: actions/checkout@v3
 
-      - name: "Install dependencies"
-        run: pip3 install -r requirements.txt
+      - name: "Install dominant_colours"
+        run: |
+          curl -L -O 'https://github.com/alexwlchan/dominant_colours/releases/download/v1.1.8/dominant_colours-aarch64-unknown-linux-musl.tar.gz'
+          tar -xzf dominant_colours-aarch64-unknown-linux-musl.tar.gz
+          chmod +x dominant_colours
+          mv dominant_colours /usr/local/bin/dominant_colours
 
-      - name: "Get the book data"
-        run: python3 get_book_data.py
-        env:
-          LIBRARY_CARD_NUMBER: ${{ secrets.LIBRARY_CARD_NUMBER }}
-          LIBRARY_CARD_PASSWORD: ${{ secrets.LIBRARY_CARD_PASSWORD }}
+      - name: "Check it works"
+        run: dominant_colours screenshot.png
 
-      - name: "Render the data as HTML"
-        run: python3 render_data_as_html.py
-
-      - name: "Install the Netlify CLI"
-        run: npm install -g netlify-cli
-
-      - name: "Deploy to Netlify"
-        run: netlify deploy --dir=_html/ --prod
-        env:
-          NETLIFY_AUTH_TOKEN: ${{ secrets.NETLIFY_AUTH_TOKEN }}
+      # - name: "Install dependencies"
+      #   run: pip3 install -r requirements.txt
+      #
+      # - name: "Get the book data"
+      #   run: python3 get_book_data.py
+      #   env:
+      #     LIBRARY_CARD_NUMBER: ${{ secrets.LIBRARY_CARD_NUMBER }}
+      #     LIBRARY_CARD_PASSWORD: ${{ secrets.LIBRARY_CARD_PASSWORD }}
+      #
+      # - name: "Render the data as HTML"
+      #   run: python3 render_data_as_html.py
+      #
+      # - name: "Install the Netlify CLI"
+      #   run: npm install -g netlify-cli
+      #
+      # - name: "Deploy to Netlify"
+      #   run: netlify deploy --dir=_html/ --prod
+      #   env:
+      #     NETLIFY_AUTH_TOKEN: ${{ secrets.NETLIFY_AUTH_TOKEN }}
