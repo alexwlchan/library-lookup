@@ -19,8 +19,8 @@ jobs:
 
       - name: "Install dominant_colours"
         run: |
-          curl -L -O 'https://github.com/alexwlchan/dominant_colours/releases/download/v1.1.8/dominant_colours-aarch64-unknown-linux-gnu.tar.gz'
-          tar -xzf dominant_colours-aarch64-unknown-linux-gnu.tar.gz
+          curl -L -O 'https://github.com/alexwlchan/dominant_colours/releases/download/v1.1.8/dominant_colours-x86_64-unknown-linux-gnu.tar.gz'
+          tar -xzf dominant_colours-x86_64-unknown-linux-gnu.tar.gz
           chmod +x dominant_colours
           mv dominant_colours /usr/local/bin/dominant_colours
 
