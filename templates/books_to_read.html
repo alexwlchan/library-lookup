@@ -32,6 +32,9 @@
         }
 
         renderBooks();
+
+        const timeElement = document.querySelector("time");
+        timeElement.innerHTML = getHumanFriendlyDateString(timeElement.getAttribute("datetime"));
       };
     </script>
 
@@ -74,7 +77,10 @@
       </details>
 
       <p>
-        Last updated on {{ generated_at.strftime('%A %-d %B %Y at %H:%M:%S') }}
+        Last updated
+        <time datetime="{{ generated_at.isoformat() }}">
+          {{ generated_at.strftime('%A %-d %B %Y at %H:%M:%S') }}
+        </time>
       </p>
     </aside>
 
