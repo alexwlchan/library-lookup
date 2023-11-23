@@ -59,6 +59,8 @@ a:hover {
 .no_local_copies .availability {
   background: rgba(161, 161, 161, 0.2) !important;
   margin-bottom: 1.5em;
+  font-size: 0.8em;
+  padding: 7px 10px;
 }
 
 .no_local_copies .book_summary {
