@@ -7,6 +7,7 @@ import os
 import re
 
 import bs4
+import certifi
 import httpx
 import hyperlink
 import keyring
@@ -84,6 +85,15 @@ class LibraryBrowser:
         self.browser.set_handle_refresh(
             mechanize._http.HTTPRefreshProcessor(), max_time=1, honor_time=True
         )
+
+        # This is necessary to avoid errors like:
+        #
+        #     urllib.error.URLError:
+        #     <urlopen error [SSL: CERTIFICATE_VERIFY_FAILED] certificate
+        #     verify failed: unable to get local issuer certificate
+        #     (_ssl.c:1000)>
+        #
+        self.browser.set_ca_data(cafile=certifi.where())
 
         self.browser.open(self.base_url).read()
 
