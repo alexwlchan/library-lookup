@@ -123,8 +123,8 @@ function renderBooks() {
 
         const locallyAvailableCopies = locallyAvailableLocations.length;
 
-        const availableCopies = book.availability
-          .filter(av => av.status === 'Available')
+        const availableCopies = availableLocations
+          .filter(av => !selectedBranches.includes(av.location))
           .length;
 
         return [book.id, { locallyAvailableCopies, locallyAvailableLocations, availableLocations, availableCopies } ];
