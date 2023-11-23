@@ -41,15 +41,15 @@
     <style>
     {% for book in books %}
       {% if book.tint_color is defined %}
-        div[data-book-id="{{ book.id }}"] a {
+        div[data-book-brn="{{ book.record_details.BRN }}"] a {
           color: {{ book.tint_color }};
         }
 
-        div[data-book-id="{{ book.id }}"] a:hover {
+        div[data-book-brn="{{ book.record_details.BRN }}"] a:hover {
           background: {{ book.tint_color | rgba(opacity=0.2) }};
         }
 
-        div[data-book-id="{{ book.id }}"] .availability {
+        div[data-book-brn="{{ book.record_details.BRN }}"] .availability {
           background: {{ book.tint_color | rgba(opacity=0.2) }};
         }
       {% endif %}
@@ -87,7 +87,7 @@
     <main>
       <div id="books">
         {% for book in books %}
-        <div class="book" data-book-id="{{ book.id }}" data-book-title="{{ book.title }}" style="display: none;">
+        <div class="book" data-book-brn="{{ book.record_details.BRN }}" data-book-title="{{ book.title }}">
           <div class="book_cover">
             {% if book.image != None %}
               <img src="{{ book.image }}">
@@ -104,7 +104,7 @@
                 {%- endif -%}
               )
             </h3>
-            
+
             {% for paragraph in book.record_details['Summary'] %}
               <p class="book_summary">{{ paragraph }}</p>
             {% endfor %}

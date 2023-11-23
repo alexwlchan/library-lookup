@@ -5,7 +5,6 @@ import datetime
 import json
 import os
 import re
-import secrets
 import shutil
 
 import jinja2
@@ -68,8 +67,6 @@ if __name__ == "__main__":
     os.makedirs("_html", exist_ok=True)
 
     for b in book_data["books"]:
-        b["id"] = str(secrets.token_hex())
-
         if b["image"]:
             b["tint_color"] = choose_tint_color_for_file(b["image"])
 

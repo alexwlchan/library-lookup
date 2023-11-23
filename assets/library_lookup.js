@@ -5,7 +5,6 @@ function getAvailabilityMessage(availability) {
     return `${availability.locallyAvailableCopies} copies nearby`;
   }
 
-
   if (availability.availableCopies === 0) {
     return 'No copies';
   } else if (availability.availableCopies === 1 && availability.locallyAvailableCopies === 0) {
@@ -127,7 +126,7 @@ function renderBooks() {
           .filter(av => !selectedBranches.includes(av.location))
           .length;
 
-        return [book.id, { locallyAvailableCopies, locallyAvailableLocations, availableLocations, availableCopies } ];
+        return [book.record_details.BRN, { locallyAvailableCopies, locallyAvailableLocations, availableLocations, availableCopies } ];
       })
   );
 
@@ -135,7 +134,7 @@ function renderBooks() {
   // available.  Store these in a list [<book>, count]
   let updatedBooks = [];
   for (book of document.querySelectorAll('#books .book')) {
-    const availability = bookAvailability[book.getAttribute('data-book-id')];
+    const availability = bookAvailability[book.getAttribute('data-book-brn')];
 
     if (availability.locallyAvailableCopies === 0) {
       book.classList.add("no_local_copies");
