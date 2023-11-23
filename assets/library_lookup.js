@@ -19,13 +19,21 @@ function getAvailabilityMessage(availability) {
   };
 }
 
+function getAvailabilityDescription(availability) {
+    const callNumber = availability.call_number.replaceAll(" pbk", " paperback");
+
+    if (availability.collection === 'Fiction' && callNumber.startsWith('General fiction')) {
+        return `${availability.location} / ${callNumber}`;
+    }
+
+    return callNumber !== ""
+        ? `${availability.location} / ${availability.collection} / ${callNumber}`
+        : `${availability.location} / ${availability.collection}`
+}
+
 function getListOfCopies(availability) {
   const talliedAvailability = availability
-    .map(av =>
-      av.call_number !== ""
-        ? `${av.location} / ${av.collection} / ${av.call_number}`
-        : `${av.location} / ${av.collection}`
-    )
+    .map(av => getAvailabilityDescription(av))
     .reduce((tally, av) => {
         tally[av] = (tally[av] || 0) + 1;
         return tally;

@@ -47,7 +47,7 @@
     assertEqual(
       result,
       '<p><strong>1 copy available nearby.</strong></p>' +
-      '<ul><li>Ware Library / Fiction / General fiction pbk</li></ul>'
+      '<ul><li>Ware Library / General fiction paperback</li></ul>'
     );
   });
 
@@ -59,7 +59,7 @@
         {
           location: 'Ware Library',
           collection: 'Fiction',
-          call_number: 'General fiction pbk'
+          call_number: 'General fiction paperback'
         }
       ],
       availableLocations: [
@@ -74,7 +74,7 @@
 
     assertEqual(result,
       '<p><strong>1 copy available nearby.</strong></p>' +
-      '<ul><li>Ware Library / Fiction / General fiction pbk</li></ul>' +
+      '<ul><li>Ware Library / General fiction paperback</li></ul>' +
       '<p>plus 3 more copies in Oakmere and Radlett.</p>'
     );
   });
@@ -125,5 +125,25 @@
     });
 
     assertEqual(result, '<p>5 copies available in Oakmere, Radlett and Stevenage.</p>');
+  });
+
+  it('getAvailabilityDescription: it fixes the `pbk` description', () => {
+    const result = getAvailabilityDescription({
+      location: 'Bishops Stortford Library',
+      collection: 'Fiction',
+      call_number: 'Crime pbk',
+    });
+
+    assertEqual(result, 'Bishops Stortford Library / Fiction / Crime paperback');
+  });
+
+  it('getAvailabilityDescription: it doesn’t repeat Fiction / General Fiction', () => {
+    const result = getAvailabilityDescription({
+      location: 'Bishops Stortford Library',
+      collection: 'Fiction',
+      call_number: 'General fiction pbk',
+    });
+
+    assertEqual(result, 'Bishops Stortford Library / General fiction paperback');
   });
 </script>
