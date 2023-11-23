@@ -179,10 +179,6 @@ function renderBooks() {
   document.querySelector('#books').innerHTML = null;
   document.querySelector('#books').appendChild(elements);
 
-  for (book of document.querySelectorAll('#books .book')) {
-    book.style.display = "grid";
-  }
-
   if (selectedBranches.length > 0) {
 document.querySelector('#selectedBranchCount').innerHTML = `(${selectedBranches.length} selected)`
   } else {
