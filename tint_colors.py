@@ -1,11 +1,8 @@
 # from docstore
 # https://github.com/alexwlchan/docstore/blob/main/src/docstore/tint_colors.py
 
-import collections
 import colorsys
 import json
-import math
-import os
 import subprocess
 
 import wcag_contrast_ratio as contrast
@@ -88,7 +85,7 @@ def choose_tint_color_for_file(path):
         dominant_colors=colors, background_color=background_color
     )
 
-    hex = f"#%02x%02x%02x" % (int(red * 255), int(green * 255), int(blue * 255))
+    hex = "#%02x%02x%02x" % (int(red * 255), int(green * 255), int(blue * 255))
 
     cached_colors[path] = hex
 
