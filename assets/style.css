@@ -38,7 +38,17 @@ img {
   border-radius: 6px;
   padding:       15px;
   margin-left:  -15px;
-  margin-right: -15px;
+}
+
+/* on narrow screens, let the availability info fill the width of the display */
+@media screen and (max-width: 500px) {
+  .book:not(.no_local_copies) .availability {
+    margin-left:   -1em;
+    margin-right:  -1em;
+    padding-left:   1em;
+    padding-right:  1em;
+    border-radius: 0;
+  }
 }
 
 a {
