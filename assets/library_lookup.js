@@ -100,9 +100,9 @@ function getAvailabilityInfo(availability) {
     case 0:
       return availabilityMessage;
     case 1:
-      return `${availabilityMessage}<p>plus 1 more copy in ${extraLocationMessage}.</p>`
+      return `${availabilityMessage}<p class="extra_copies">plus 1 more copy in ${extraLocationMessage}.</p>`
     default:
-      return `${availabilityMessage}<p>plus ${availability.availableCopies} more copies in ${extraLocationMessage}.</p>`
+      return `${availabilityMessage}<p class="extra_copies">plus ${availability.availableCopies} more copies in ${extraLocationMessage}.</p>`
   }
 }
 

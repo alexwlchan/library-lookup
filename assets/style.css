@@ -33,11 +33,12 @@ img {
   height: 180px;
 }
 
-.availability {
-  background: rgba(141, 172, 27, 0.2);
-  padding: 15px;
+.book:not(.no_local_copies) .availability {
   margin-bottom: 3em;
   border-radius: 6px;
+  padding:       15px;
+  margin-left:  -15px;
+  margin-right: -15px;
 }
 
 a {
@@ -46,6 +47,19 @@ a {
 
 a:hover {
   background: rgba(105, 128, 20, 0.2);
+}
+
+details {
+  margin-bottom: 1em;
+}
+
+.no_local_copies {
+  margin-bottom: 1em;
+}
+
+.no_local_copies .book_metadata {
+  margin-top:    auto;
+  margin-bottom: auto;
 }
 
 .no_local_copies a {
@@ -57,20 +71,24 @@ a:hover {
 }
 
 .no_local_copies .availability {
-  background: rgba(161, 161, 161, 0.2) !important;
-  margin-bottom: 1.5em;
-  font-size: 0.8em;
-  padding: 7px 10px;
+  background: none !important;
+  margin-bottom: 0;
+  padding: 0;
 }
 
-.no_local_copies .book_summary {
+.no_local_copies .availability,
+.availability .extra_copies {
+  font-size: small;
+}
+
+.no_local_copies details {
   display: none;
 }
 
 .no_local_copies h3 {
   font-size: 1em;
   margin-top: 0;
-  margin-bottom: 10px;
+  margin-bottom: 5px;
 }
 
 .no_local_copies img {
@@ -154,10 +172,11 @@ aside p {
 
 .availability p {
   margin-top: 0;
+  line-height: 1.45em;
 }
 
 .availability p:last-child {
-  margin-bottom: 0;
+  margin-bottom: -5px;
 }
 
 .availability ul:last-child {

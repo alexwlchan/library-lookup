@@ -105,9 +105,13 @@
               )
             </h3>
 
-            {% for paragraph in book.record_details['Summary'] %}
-              <p class="book_summary">{{ paragraph }}</p>
-            {% endfor %}
+            <details>
+              <summary>Summary</summary>
+
+              {% for paragraph in book.record_details['Summary'] %}
+                <p class="book_summary">{{ paragraph }}</p>
+              {% endfor %}
+            </details>
 
             <div class="availability">
               <strong>Availability:</strong>
