@@ -68,6 +68,7 @@ function getAvailabilityInfo(availability) {
           ? location.replace(/ Library$/, '')
           : location
       )
+      .map(location => `<span class="location_name">${location}</span>`)
       .filter(onlyUnique);
 
   extraLocations.sort();

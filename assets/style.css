@@ -163,3 +163,7 @@ aside p {
 .availability ul:last-child {
   margin-bottom: 3px;
 }
+
+.location_name {
+  white-space: nowrap;
+}
