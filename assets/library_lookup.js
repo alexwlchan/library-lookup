@@ -25,6 +25,10 @@ function getAvailabilityDescription(availability) {
         return `${availability.location} / ${callNumber}`;
     }
 
+    if (availability.collection === 'Fiction' && callNumber.startsWith('Science fiction')) {
+        return `${availability.location} / ${callNumber}`;
+    }
+
     return callNumber !== ""
         ? `${availability.location} / ${availability.collection} / ${callNumber}`
         : `${availability.location} / ${availability.collection}`
