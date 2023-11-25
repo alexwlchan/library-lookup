@@ -38,6 +38,11 @@ img {
   border-radius: 6px;
   padding:       15px;
   margin-left:  -15px;
+  padding-bottom: 11px;
+}
+
+.book:not(.no_local_copies) .availability p:last-child {
+  padding-bottom: 5px;
 }
 
 /* on narrow screens, let the availability info fill the width of the display */
