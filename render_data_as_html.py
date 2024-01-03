@@ -49,8 +49,8 @@ if __name__ == "__main__":
     # Get a tally of all the (title, author_name) pairs
     unique_titles = collections.Counter()
 
-    for book in book_data['books']:
-        unique_titles[(book['title'], book['author'])] += 1
+    for book in book_data["books"]:
+        unique_titles[(book["title"], book["author"])] += 1
 
     # Set up the Jinja environment
     env = Environment(
@@ -71,11 +71,11 @@ if __name__ == "__main__":
             b["tint_color"] = choose_tint_color_for_file(b["image"])
 
         if "pbk" in b["record_details"].get("ISBN", ""):
-            b['format'] = 'paperback'
-        elif 'hbk' in b["record_details"].get("ISBN", ""):
-            b['format'] = 'hardback'
+            b["format"] = "paperback"
+        elif "hbk" in b["record_details"].get("ISBN", ""):
+            b["format"] = "hardback"
         else:
-            b['format'] = None
+            b["format"] = None
 
     with open("_html/index.html", "w") as outfile:
         outfile.write(

@@ -58,7 +58,7 @@ def choose_tint_color_for_file(path):
     Returns the tint colour for a file.
     """
     try:
-        with open('colors.json') as infile:
+        with open("colors.json") as infile:
             cached_colors = json.load(infile)
     except FileNotFoundError:
         cached_colors = {}
@@ -73,13 +73,10 @@ def choose_tint_color_for_file(path):
     cmd = ["dominant_colours", "--no-palette", "--max-colours=12", path]
 
     dominant_colors = [
-        from_hex(line)
-        for line in subprocess.check_output(cmd).splitlines()
+        from_hex(line) for line in subprocess.check_output(cmd).splitlines()
     ]
 
-    colors = [
-        (r / 255, g / 255, b / 255) for r, g, b in dominant_colors
-    ]
+    colors = [(r / 255, g / 255, b / 255) for r, g, b in dominant_colors]
 
     red, green, blue = choose_tint_color_from_dominant_colors(
         dominant_colors=colors, background_color=background_color
@@ -89,7 +86,7 @@ def choose_tint_color_for_file(path):
 
     cached_colors[path] = hex
 
-    with open('colors.json', 'w') as outfile:
+    with open("colors.json", "w") as outfile:
         outfile.write(json.dumps(cached_colors, indent=2, sort_keys=True))
 
     return hex
