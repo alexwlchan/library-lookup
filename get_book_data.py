@@ -213,6 +213,13 @@ class LibraryBrowser:
             author = "Ursula K. Le Guin"
             title = "Voyager to Inner Lands and to Outer Space"
             publication_year = "1979"
+        elif (
+            title
+            == "From hurt to hope : stories of mental health, mental illness and being autistic"
+            and len(recdetail_spans) == 1
+        ):
+            author = "Various authors"
+            publication_year = "2021"
         elif len(recdetail_spans) != 2:
             print(
                 f'Unexpected data on {title}; could not find two instances of <div class="recdetails">'
