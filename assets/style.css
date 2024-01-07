@@ -162,12 +162,23 @@ aside p {
 }
 
 #branch_picker {
-  column-count: 3;
   padding: 1em;
   background: #292929;
   border: 1px solid #111;
   border-radius: 5px;
   margin-bottom: 1em;
+}
+
+#branch_picker summary {
+  margin-bottom: -5px;
+}
+
+#branch_picker[open] summary {
+  margin-bottom: 0;
+}
+
+#branch_picker .branches {
+  column-count: 3;
 }
 
 @media screen and (max-width: 500px) {

@@ -185,7 +185,7 @@ function renderBooks() {
   document.querySelector('#books').appendChild(elements);
 
   if (selectedBranches.length > 0) {
-document.querySelector('#selectedBranchCount').innerHTML = `(${selectedBranches.length} selected)`
+document.querySelector('#selectedBranchCount').innerHTML = `(${selectedBranches.length} selected – ${selectedBranches.join("; ")})`
   } else {
     document.querySelector('#selectedBranchCount').innerHTML = '';
   }

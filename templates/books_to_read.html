@@ -60,7 +60,9 @@
   <body>
     <aside>
       <details id="branch_picker">
-        <summary style="margin-bottom: 5px;">Select branches <span id="selectedBranchCount"></span></summary>
+        <summary>Select branches <span id="selectedBranchCount"></span></summary>
+        
+        <div class="branches">
 
         {% for branch in branches | sort %}
           <p>
@@ -74,6 +76,7 @@
             <label for="branch-{{ branch }}">{{ branch }}</label>
           <p/>
         {% endfor %}
+        </div>
       </details>
 
       <p>
