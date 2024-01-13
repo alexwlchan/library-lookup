@@ -386,10 +386,10 @@ class LibraryBrowser:
 
 
 if __name__ == "__main__":
-    if os.environ.get("CI") == "true":
+    try:
         username = os.environ["LIBRARY_CARD_NUMBER"]
         password = os.environ["LIBRARY_CARD_PASSWORD"]
-    else:
+    except KeyError:
         username = keyring.get_password("library", "username")
         password = keyring.get_password("library", "password")
 
