@@ -1,0 +1,43 @@
+name: run_tests
+
+on:
+  push:
+    branches:
+    - "main"
+
+  pull_request:
+    branches:
+    - "main"
+
+jobs:
+  test:
+    name: Run tests
+    runs-on: ubuntu-latest
+    steps:
+      - name: "Check out the repo"
+        uses: actions/checkout@v3
+
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: "3.12"
+
+      - name: "Install dependencies"
+        run: pip3 install -r dev_requirements.txt
+
+      - name: Run linting
+        run: |
+          black --check .
+
+          # E501 = line too long; anything up to 100-ish is fine in my book
+          # (the "ish" is intentional; see https://www.youtube.com/watch?v=wf-BqAjZb8M)
+          #
+          # W503 = line break before binary operator; this is something added
+          # by black and I don't have a strong opinion on, so I'm going to trust
+          # black and have flake8 ignore it.
+          flake8 --ignore=E501,W503
+
+      - name: Run tests
+        run: |
+          coverage run -m pytest
+          coverage report --show-missing --skip-covered
