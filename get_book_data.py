@@ -393,6 +393,9 @@ if __name__ == "__main__":
         username = keyring.get_password("library", "username")
         password = keyring.get_password("library", "password")
 
+    assert isinstance(username, str)
+    assert isinstance(password, str)
+
     browser = LibraryBrowser(
         base_url="https://herts.spydus.co.uk", username=username, password=password
     )
