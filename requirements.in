@@ -5,6 +5,7 @@ Jinja2
 keyring
 mechanize
 Pillow
+tenacity
 tqdm
 Unidecode
 wcag_contrast_ratio

@@ -5,6 +5,7 @@ import functools
 import json
 import os
 import re
+from urllib.error import URLError
 
 import bs4
 import certifi
@@ -12,6 +13,7 @@ import httpx
 import hyperlink
 import keyring
 import mechanize
+from tenacity import retry, stop_after_attempt, retry_if_exception_type
 import tqdm
 from unidecode import unidecode
 
@@ -104,6 +106,7 @@ class LibraryBrowser:
         self.browser.set_value(password, name="BRWLPWD")
         self.browser.submit().read()
 
+    @retry(stop=stop_after_attempt(3), retry=retry_if_exception_type(URLError))
     def _get_soup(self, url: str):
         """
         Open a URL and parse the HTML with BeautifulSoup.

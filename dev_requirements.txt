@@ -125,6 +125,8 @@ soupsieve==2.5
     # via
     #   -r requirements.txt
     #   beautifulsoup4
+tenacity==8.2.3
+    # via -r requirements.txt
 tomli==2.0.1
     # via
     #   black
