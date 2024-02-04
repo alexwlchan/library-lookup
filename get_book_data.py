@@ -13,7 +13,12 @@ import httpx
 import hyperlink
 import keyring
 import mechanize
-from tenacity import retry, stop_after_attempt, retry_if_exception_type, wait_exponential
+from tenacity import (
+    retry,
+    stop_after_attempt,
+    retry_if_exception_type,
+    wait_exponential,
+)
 import tqdm
 from unidecode import unidecode
 
@@ -109,7 +114,7 @@ class LibraryBrowser:
     @retry(
         stop=stop_after_attempt(5),
         retry=retry_if_exception_type(URLError),
-        wait=wait_exponential(multiplier=1, min=1, max=15)
+        wait=wait_exponential(multiplier=1, min=1, max=15),
     )
     def _get_soup(self, url: str):
         """
