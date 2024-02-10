@@ -9,6 +9,7 @@ import shutil
 
 import jinja2
 from jinja2 import Environment, FileSystemLoader, select_autoescape
+from PIL import Image
 
 from tint_colors import choose_tint_color_for_file, from_hex
 
@@ -80,6 +81,11 @@ if __name__ == "__main__":
     for b in book_data["books"]:
         if b["image"]:
             b["tint_color"] = choose_tint_color_for_file(b["image"])
+
+            im = Image.open(b["image"])
+
+            b["image_width"] = im.width
+            b["image_height"] = im.height
 
         if "pbk" in b["record_details"].get("ISBN", ""):
             b["format"] = "paperback"
