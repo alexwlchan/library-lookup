@@ -5,7 +5,7 @@ import functools
 import json
 import os
 import re
-from urllib.error import URLError
+from urllib.error import HTTPError, URLError
 
 import bs4
 import certifi
@@ -13,12 +13,7 @@ import httpx
 import hyperlink
 import keyring
 import mechanize
-from tenacity import (
-    retry,
-    stop_after_attempt,
-    retry_if_exception_type,
-    wait_exponential,
-)
+from tenacity import retry, stop_after_attempt, wait_exponential
 import tqdm
 from unidecode import unidecode
 
@@ -76,6 +71,16 @@ def save_image_locally(img_element):
     return out_path
 
 
+def is_retryable(exc: Exception) -> bool:
+    if isinstance(exc, URLError):
+        return True
+
+    if isinstance(exc, HTTPError) and exc.code >= 500:
+        return True
+
+    return False
+
+
 class LibraryBrowser:
     def __init__(self, *, base_url: str, username: str, password: str) -> None:
         self.base_url = base_url
@@ -113,7 +118,7 @@ class LibraryBrowser:
 
     @retry(
         stop=stop_after_attempt(5),
-        retry=retry_if_exception_type(URLError),
+        retry=is_retryable,
         wait=wait_exponential(multiplier=1, min=1, max=15),
     )
     def _get_soup(self, url: str):
