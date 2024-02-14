@@ -98,7 +98,7 @@
           </div>
           <div class="book_metadata">
             <h3>
-              <a href="{{ book.record_details['Bookmark link'] }}">{{ book.title }}</a>{% if book.author %},
+              <a href="{{ book.record_details['Bookmark link'] }}">{{ book.title.replace(' : ', ': ') }}</a>{% if book.author %},
               by {{ book.author | author_name }}
               {% endif %}
               {% if book.publication_year %}
