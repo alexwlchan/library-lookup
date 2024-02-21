@@ -55,6 +55,13 @@ jobs:
         run: npm install -g netlify-cli
 
       - name: "Deploy to Netlify"
+        if: github.ref != 'refs/heads/main'
+        run: netlify deploy --dir=_html/
+        env:
+          NETLIFY_AUTH_TOKEN: ${{ secrets.NETLIFY_AUTH_TOKEN }}
+
+      - name: "Deploy to Netlify"
+        if: github.ref == 'refs/heads/main'
         run: netlify deploy --dir=_html/ --prod
         env:
           NETLIFY_AUTH_TOKEN: ${{ secrets.NETLIFY_AUTH_TOKEN }}
