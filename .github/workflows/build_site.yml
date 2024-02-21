@@ -24,6 +24,13 @@ jobs:
           key: "books-${{ github.sha }}"
           restore-keys: "books-"
 
+      - name: "Cache cover images"
+        uses: "actions/cache@v4"
+        with:
+          path: covers
+          key: "covers-${{ github.sha }}"
+          restore-keys: "covers-"
+
       - name: Set up Python
         uses: actions/setup-python@v5
         with:
