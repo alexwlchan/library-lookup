@@ -5,6 +5,10 @@ on:
     branches:
     - "main"
 
+  pull_request:
+    branches:
+    - "main"
+
   # rebuild once a day at 7:30 UTC
   schedule:
     - cron: "30 7 * * *"
