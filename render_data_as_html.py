@@ -10,6 +10,7 @@ import shutil
 import jinja2
 from jinja2 import Environment, FileSystemLoader, select_autoescape
 from PIL import Image
+import titlecase
 
 from tint_colors import choose_tint_color_for_file, from_hex
 
@@ -92,6 +93,7 @@ if __name__ == "__main__":
 
     env.filters["author_name"] = display_author_name
     env.filters["rgba"] = rgba
+    env.filters["titlecase"] = titlecase.titlecase
 
     template = env.get_template("books_to_read.html")
 
