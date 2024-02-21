@@ -36,6 +36,7 @@ jobs:
         run: pip3 install -r requirements.txt
 
       - name: "Get the book data"
+        if: github.ref == 'refs/heads/main'
         run: python3 get_book_data.py
         env:
           LIBRARY_CARD_NUMBER: ${{ secrets.LIBRARY_CARD_NUMBER }}
