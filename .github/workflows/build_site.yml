@@ -17,6 +17,13 @@ jobs:
       - name: "Check out the repo"
         uses: actions/checkout@v4
 
+      - name: "Cache book data"
+        uses: "actions/cache@v4"
+        with:
+          path: books.json
+          key: "books-${{ github.sha }}"
+          restore-keys: "books-"
+
       - name: Set up Python
         uses: actions/setup-python@v5
         with:
@@ -36,6 +43,7 @@ jobs:
         run: pip3 install -r requirements.txt
 
       - name: "Get the book data"
+        if: github.ref == 'refs/heads/main'
         run: python3 get_book_data.py
         env:
           LIBRARY_CARD_NUMBER: ${{ secrets.LIBRARY_CARD_NUMBER }}
@@ -47,7 +55,14 @@ jobs:
       - name: "Install the Netlify CLI"
         run: npm install -g netlify-cli
 
-      - name: "Deploy to Netlify"
+      - name: "Deploy to Netlify (preview)"
+        if: github.ref != 'refs/heads/main'
+        run: netlify deploy --dir=_html/
+        env:
+          NETLIFY_AUTH_TOKEN: ${{ secrets.NETLIFY_AUTH_TOKEN }}
+
+      - name: "Deploy to Netlify (live)"
+        if: github.ref == 'refs/heads/main'
         run: netlify deploy --dir=_html/ --prod
         env:
           NETLIFY_AUTH_TOKEN: ${{ secrets.NETLIFY_AUTH_TOKEN }}
