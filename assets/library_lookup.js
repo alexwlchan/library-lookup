@@ -163,16 +163,18 @@ function renderBooks() {
     updatedBooks.push({ book, title, year, locallyAvailableCopies: availability.locallyAvailableCopies });
   }
 
-  // Sort the books so those with the most copies are at the top.
-  // If two books have the same number of copies, arbitrarily sort
-  // by title.
+  // Sort the books so that any books with copies available float to the top,
+  // then sort by title alphabetically.
   updatedBooks.sort(function(a, b) {
-    if (a.locallyAvailableCopies === b.locallyAvailableCopies && a.title === b.title) {
-      return Number(b.year) - Number(a.year)
-    } else if (a.locallyAvailableCopies === b.locallyAvailableCopies) {
-      return a.title > b.title ? 1 : -1;
+    if (a.locallyAvailableCopies > 0 && b.locallyAvailableCopies === 0) {
+      return -1;
+    } else if (a.locallyAvailableCopies === 0 & b.locallyAvailableCopies > 0) {
+      return 1;
     } else {
-      return b.locallyAvailableCopies - a.locallyAvailableCopies;
+      const sortTitleA = a.title.replace(/^The /, '');
+      const sortTitleB = b.title.replace(/^The /, '');
+
+      return sortTitleA > sortTitleB ? 1 : -1;
     }
   });
 
