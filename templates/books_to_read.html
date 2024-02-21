@@ -102,12 +102,7 @@
               by {{ book.author | author_name }}
               {% endif %}
               {% if book.publication_year %}
-              (
-                {{- book.publication_year -}}
-                {%- if unique_titles[(book['title'], book['author'])] > 1 and book.format is defined -%}
-                , {{ book.format }}
-                {%- endif -%}
-              )
+                ({{ book.publication_year }})
               {% endif %}
             </h3>
 

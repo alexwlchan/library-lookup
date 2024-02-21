@@ -51,18 +51,37 @@ def rgba(hs, opacity):
 if __name__ == "__main__":
     book_data = json.load(open("books.json"))
 
+    # Group books by (title, author) pairs.  This ensures that copies
+    # of the same book in different formats (e.g. paperback, hardback)
+    # will be collapsed into a single entry.
+    books_by_title = collections.defaultdict(list)
+    grouped_books = []
+
+    for book in book_data["books"]:
+        key = (book["title"], book["author"])
+        books_by_title[key].append(book)
+
+    for _, these_books in books_by_title.items():
+        if len(these_books) == 1:
+            grouped_books.append(these_books[0])
+        else:
+            these_books = sorted(these_books, key=lambda b: b.get("year", "0"))
+
+            this_book = these_books[0]
+
+            for book in these_books[1:]:
+                this_book["availability"].extend(book["availability"])
+
+            grouped_books.append(this_book)
+
+    book_data["books"] = grouped_books
+
     # Get a tally of all the branches in the Hertfordshire network
     branches = set()
     for book in book_data["books"]:
         for av in book["availability"]:
             if av["status"] == "Available":
                 branches.add(av["location"])
-
-    # Get a tally of all the (title, author_name) pairs
-    unique_titles = collections.Counter()
-
-    for book in book_data["books"]:
-        unique_titles[(book["title"], book["author"])] += 1
 
     # Set up the Jinja environment
     env = Environment(
@@ -99,7 +118,6 @@ if __name__ == "__main__":
             template.render(
                 books=book_data["books"],
                 branches=branches,
-                unique_titles=unique_titles,
                 generated_at=datetime.datetime.fromisoformat(book_data["generated_at"]),
             )
         )

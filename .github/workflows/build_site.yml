@@ -5,6 +5,10 @@ on:
     branches:
     - "main"
 
+  pull_request:
+    branches:
+    - "main"
+
   # rebuild once a day at 7:30 UTC
   schedule:
     - cron: "30 7 * * *"
@@ -16,6 +20,13 @@ jobs:
     steps:
       - name: "Check out the repo"
         uses: actions/checkout@v4
+
+      - name: "Restore title cache"
+        uses: "actions/cache@v4"
+        with:
+          path: titles.json
+          key: "titles-${{ github.sha }}"
+          restore-keys: "titles-"
 
       - name: Set up Python
         uses: actions/setup-python@v5
@@ -35,19 +46,26 @@ jobs:
       - name: "Install dependencies"
         run: pip3 install -r requirements.txt
 
-      - name: "Get the book data"
-        run: python3 get_book_data.py
-        env:
-          LIBRARY_CARD_NUMBER: ${{ secrets.LIBRARY_CARD_NUMBER }}
-          LIBRARY_CARD_PASSWORD: ${{ secrets.LIBRARY_CARD_PASSWORD }}
-
-      - name: "Render the data as HTML"
-        run: python3 render_data_as_html.py
+      # - name: "Get the book data"
+      #   run: python3 get_book_data.py
+      #   env:
+      #     LIBRARY_CARD_NUMBER: ${{ secrets.LIBRARY_CARD_NUMBER }}
+      #     LIBRARY_CARD_PASSWORD: ${{ secrets.LIBRARY_CARD_PASSWORD }}
+      #
+      # - name: "Render the data as HTML"
+      #   run: python3 render_data_as_html.py
 
       - name: "Install the Netlify CLI"
         run: npm install -g netlify-cli
 
       - name: "Deploy to Netlify"
+        if: github.ref != 'refs/heads/main'
+        run: netlify deploy --dir=_html/
+        env:
+          NETLIFY_AUTH_TOKEN: ${{ secrets.NETLIFY_AUTH_TOKEN }}
+
+      - name: "Deploy to Netlify"
+        if: github.ref == 'refs/heads/main'
         run: netlify deploy --dir=_html/ --prod
         env:
           NETLIFY_AUTH_TOKEN: ${{ secrets.NETLIFY_AUTH_TOKEN }}
