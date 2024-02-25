@@ -171,8 +171,8 @@ function renderBooks() {
     } else if (a.locallyAvailableCopies === 0 & b.locallyAvailableCopies > 0) {
       return 1;
     } else {
-      const sortTitleA = a.title.replace(/^The /, '');
-      const sortTitleB = b.title.replace(/^The /, '');
+      const sortTitleA = a.title.replace(/^The /, '').toLowerCase();
+      const sortTitleB = b.title.replace(/^The /, '').toLowerCase();
 
       return sortTitleA > sortTitleB ? 1 : -1;
     }
