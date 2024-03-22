@@ -5,6 +5,7 @@ import functools
 import json
 import os
 import re
+import sys
 from urllib.error import HTTPError, URLError
 
 import bs4
@@ -181,7 +182,11 @@ class LibraryBrowser:
             result_content_List = soup.find("div", attrs={"id": "result-content-list"})
 
             for fieldset in result_content_List.find_all("fieldset"):
-                yield self.parse_fieldset_info(fieldset)
+                try:
+                    yield self.parse_fieldset_info(fieldset)
+                except Exception:
+                    print(f"Unable to get info from {fieldset!r}", file=sys.stderr)
+                    raise
 
             # Now look for a link to the next page, if there is one.
             #
