@@ -120,7 +120,7 @@ class LibraryBrowser:
         return bs4.BeautifulSoup(resp, "html.parser")
 
     @functools.cache
-    def get_default_list(self):
+    def get_default_list(self) -> str:
         """
         Returns the URL to my default list.
         """
