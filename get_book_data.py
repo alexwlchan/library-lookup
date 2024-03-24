@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
 
+from collections.abc import Iterable
 import datetime
 import functools
 import json
@@ -144,16 +145,42 @@ class LibraryBrowser:
 
         return {"count": count, "url": url}
 
-    def get_books_in_list(self, url) -> None:
+    def get_pages_in_list(self, url: str) -> Iterable[bs4.BeautifulSoup]:
+        """
+        Given a paginated list, fetch each page of the list in turn
+        and generate the HTML as parsed by BeautifulSoup.
+
+            :param url: The first page of he list.
+
+        """
+        while True:
+            soup = self._get_soup(url)
+
+            yield soup
+
+            # Now look for a link to the next page, if there is one.
+            #
+            #     <nav class="prvnxt result-pages-prvnxt">
+            #       <ul class="list-inline mb-0">
+            #         <li class="list-inline-item prv">Previous</li>
+            #         <li class="list-inline-item nxt">
+            #           <a href="/cgi-bin/spydus.exe/…">Next</a>
+            #         </li>
+            #
+            pagination_nav = soup.find("nav", attrs={"class": "result-pages-prvnxt"})
+            next_link = pagination_nav.find("li", attrs={"class": "nxt"}).find("a")
+
+            if next_link is None:
+                break
+
+            url = next_link.attrs["href"]
+
+    def get_books_in_list(self, url: str) -> None:
         """
         Generate a list of books in a list, which is all the books
         I've marked with a bookmark icon.
         """
-        # This is the first page of results, but there are more pages.
-        # Go through each page in turn, and look for data about the books.
-        while True:
-            soup = self._get_soup(url)
-
+        for soup in self.get_pages_in_list(url):
             # The books on the page are stored in the following structure:
             #
             #     <div id="result-content-list" …>
@@ -173,23 +200,6 @@ class LibraryBrowser:
                 except Exception:
                     print(f"Unable to get info from {fieldset!r}", file=sys.stderr)
                     raise
-
-            # Now look for a link to the next page, if there is one.
-            #
-            #     <nav class="prvnxt result-pages-prvnxt">
-            #       <ul class="list-inline mb-0">
-            #         <li class="list-inline-item prv">Previous</li>
-            #         <li class="list-inline-item nxt">
-            #           <a href="/cgi-bin/spydus.exe/…">Next</a>
-            #         </li>
-            #
-            pagination_nav = soup.find("nav", attrs={"class": "result-pages-prvnxt"})
-            next_link = pagination_nav.find("li", attrs={"class": "nxt"}).find("a")
-
-            if next_link is None:
-                break
-
-            url = next_link.attrs["href"]
 
     def parse_fieldset_info(self, fieldset):
         """
