@@ -78,7 +78,7 @@ jeepney==0.8.0
     #   -r requirements.txt
     #   keyring
     #   secretstorage
-jinja2==3.1.2
+jinja2==3.1.4
     # via -r requirements.txt
 keyring==25.2.1
     # via -r requirements.txt
