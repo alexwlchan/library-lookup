@@ -8,7 +8,7 @@ anyio==4.1.0
     # via
     #   -r requirements.txt
     #   httpx
-beautifulsoup4==4.12.2
+beautifulsoup4==4.12.3
     # via -r requirements.txt
 black==23.12.1
     # via -r dev_requirements.in
