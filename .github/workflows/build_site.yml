@@ -31,11 +31,6 @@ jobs:
           key: "covers-${{ github.sha }}"
           restore-keys: "covers-"
 
-      - name: Set up Python
-        uses: actions/setup-python@v5
-        with:
-          python-version: "3.12"
-
       - name: "Install dominant_colours"
         run: |
           curl -L -O 'https://github.com/alexwlchan/dominant_colours/releases/download/v1.2.0/dominant_colours-x86_64-unknown-linux-gnu.tar.gz'
@@ -45,6 +40,12 @@ jobs:
 
       - name: "Check it works"
         run: dominant_colours screenshot.png
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: 3.12
+          cache: pip
 
       - name: "Install dependencies"
         run: pip3 install -r requirements.txt
