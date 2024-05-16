@@ -18,7 +18,7 @@ class StrictSoup:
 
     def find_optional(
         self, name: str, *, attrs: dict[str, str] | None = None
-    ) -> StrictTag | None:
+    ) -> StrictTag | None:  # noqa: F821
         tag = self._underlying.find(name, attrs=attrs or {})
 
         if tag is None:
@@ -27,7 +27,7 @@ class StrictSoup:
             assert isinstance(tag, bs4.Tag)
             return StrictTag(tag=tag)
 
-    def find_all(self, name: str) -> list[StrictTag]:
+    def find_all(self, name: str) -> list[StrictTag]:  # noqa: F821
         results = self._underlying.find_all(name)
         assert all(isinstance(r, bs4.Tag) for r in results)
         return [StrictTag(tag=t) for t in results]
