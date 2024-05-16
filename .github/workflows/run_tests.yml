@@ -37,7 +37,10 @@ jobs:
           # black and have flake8 ignore it.
           flake8 --ignore=E501,W503
 
+      - name: Check types
+        run: mypy *.py tests
+
       - name: Run tests
         run: |
-          coverage run -m pytest
+          coverage run -m pytest tests
           coverage report --show-missing --skip-covered

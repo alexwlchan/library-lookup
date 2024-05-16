@@ -8,6 +8,7 @@ on:
     paths-ignore:
       - 'dev_requirements.in'
       - 'dev_requirements.txt'
+      - 'tests/**'
 
   # rebuild once a day at 7:30 UTC
   schedule:
