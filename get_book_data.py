@@ -85,9 +85,12 @@ class AvailabilityInfo(typing.TypedDict):
     call_number: str
 
 
+RecordDetails: typing.TypeAlias = dict[str, str | list[str]]
+
+
 class FieldsetInfo(typing.TypedDict):
     title: str
-    record_details: dict[str, list[typing.Any]]
+    record_details: RecordDetails
     image: str | None
     author: str | None
     publication_year: str | None
@@ -299,7 +302,7 @@ class LibraryBrowser:
             "availability": availability,
         }
 
-    def get_record_details(self, url: str) -> dict[str, list[typing.Any]]:
+    def get_record_details(self, url: str) -> RecordDetails:
         """
         Given the URL to a book's page in the current browser session,
         get all the record details, which are shown as a table on the page.
@@ -343,7 +346,7 @@ class LibraryBrowser:
         #
         rec_details_body = soup.find("div", attrs={"id": "tabRECDETAILS-body"})
 
-        record_details = {}
+        record_details: RecordDetails = {}
 
         for row in rec_details_body.find_all("div", attrs={"class": "row"}):
             caption_text = row.find("div", attrs={"class": "fd-caption"}).getText()
@@ -371,11 +374,10 @@ class LibraryBrowser:
                 "Subject",
             }:
                 if len(value) == 1:
-                    value = value[0]
+                    record_details[key] = value[0]
                 else:
                     print(f"Record detail had multiple entries for {key}: {url}")
-
-            record_details[key] = value
+                    record_details[key] = value
 
         # There's also a summary on the page, which unlike the search
         # results, isn't truncated.  e.g.
