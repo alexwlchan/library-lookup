@@ -53,7 +53,9 @@ jobs:
           cache: pip
 
       - name: "Install dependencies"
-        run: pip3 install -r requirements.txt
+        run: |
+          python3 -m pip install -e .
+          python3 -m pip install -r requirements.txt
 
       - name: "Get the book data"
         if: github.ref == 'refs/heads/main'

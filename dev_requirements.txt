@@ -152,6 +152,12 @@ titlecase==2.4.1
     # via -r requirements.txt
 tqdm==4.66.4
     # via -r requirements.txt
+types-beautifulsoup4==4.12.0.20240511
+    # via -r dev_requirements.in
+types-html5lib==1.1.11.20240228
+    # via types-beautifulsoup4
+types-tqdm==4.66.0.20240417
+    # via -r dev_requirements.in
 typing-extensions==4.11.0
     # via mypy
 webencodings==0.5.1

@@ -23,7 +23,9 @@ jobs:
           python-version: "3.12"
 
       - name: "Install dependencies"
-        run: pip3 install -r dev_requirements.txt
+        run: |
+          python3 -m pip install -e .
+          python3 -m pip install -r dev_requirements.txt
 
       - name: Run linting
         run: |
@@ -38,7 +40,7 @@ jobs:
           flake8 --ignore=E501,W503
 
       - name: Check types
-        run: mypy *.py tests
+        run: mypy *.py src tests
 
       - name: Run tests
         run: |

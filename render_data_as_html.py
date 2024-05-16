@@ -15,7 +15,7 @@ import titlecase
 from tint_colors import choose_tint_color_for_file, from_hex
 
 
-def display_author_name(label):
+def display_author_name(label: str) -> str:
     """
     Convert an author name from Spydus into something to display
     on the page.
@@ -44,7 +44,7 @@ def display_author_name(label):
     return f"{first_name.strip()} {last_name.strip()}"
 
 
-def rgba(hs, opacity):
+def rgba(hs: str, opacity: float) -> str:
     r, g, b = from_hex(hs)
     return f"rgba({r}, {g}, {b}, {opacity})"
 

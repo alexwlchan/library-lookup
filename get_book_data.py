@@ -7,19 +7,21 @@ import json
 import os
 import re
 import sys
+import typing
 from urllib.error import HTTPError, URLError
 
 import bs4
 import certifi
 import httpx
 import hyperlink
-import keyring
 import mechanize
 from tenacity import retry, stop_after_attempt, wait_exponential
 import tqdm
 
+from library_lookup import get_required_password
 
-def save_image_locally(img_element):
+
+def save_image_locally(img_element: bs4.BeautifulSoup) -> str:
     """
     Downloads a local copy of an image, and returns the path.
     """
@@ -69,6 +71,27 @@ def is_retryable(exc: Exception) -> bool:
     return False
 
 
+class DefaultList(typing.TypedDict):
+    count: int
+    url: str
+
+
+class AvailabilityInfo(typing.TypedDict):
+    location: str
+    collection: str
+    status: str
+    call_number: str
+
+
+class FieldsetInfo(typing.TypedDict):
+    title: str
+    record_details: dict[str, list[typing.Any]]
+    image: str
+    author: str | None
+    publication_year: str | None
+    availability: list[AvailabilityInfo]
+
+
 class LibraryBrowser:
     def __init__(self, *, base_url: str, username: str, password: str) -> None:
         self.base_url = base_url
@@ -109,7 +132,7 @@ class LibraryBrowser:
         retry=is_retryable,
         wait=wait_exponential(multiplier=1, min=1, max=15),
     )
-    def _get_soup(self, url: str):
+    def _get_soup(self, url: str) -> bs4.BeautifulSoup:
         """
         Open a URL and parse the HTML with BeautifulSoup.
         """
@@ -121,9 +144,10 @@ class LibraryBrowser:
         return bs4.BeautifulSoup(resp, "html.parser")
 
     @functools.cache
-    def get_default_list(self) -> str:
+    def get_default_list(self) -> DefaultList:
         """
-        Returns the URL to my default list.
+        Return some basic info about my default list, including the
+        URL and number of titles.
         """
         # Go to the homepage
         self.browser.open(self.base_url)
@@ -175,7 +199,7 @@ class LibraryBrowser:
 
             url = next_link.attrs["href"]
 
-    def get_books_in_list(self, url: str) -> None:
+    def get_books_in_list(self, url: str) -> Iterable[bs4.BeautifulSoup]:
         """
         Generate a list of books in a list, which is all the books
         I've marked with a bookmark icon.
@@ -192,16 +216,16 @@ class LibraryBrowser:
             #       </fieldset>
             #       …
             #
-            result_content_List = soup.find("div", attrs={"id": "result-content-list"})
+            result_content_list = soup.find("div", attrs={"id": "result-content-list"})
 
-            for fieldset in result_content_List.find_all("fieldset"):
+            for fieldset in result_content_list.find_all("fieldset"):
                 try:
                     yield self.parse_fieldset_info(fieldset)
                 except Exception:
                     print(f"Unable to get info from {fieldset!r}", file=sys.stderr)
                     raise
 
-    def parse_fieldset_info(self, fieldset):
+    def parse_fieldset_info(self, fieldset: bs4.BeautifulSoup) -> FieldsetInfo:
         """
         Given a <fieldset> element from the list of books in a saved list,
         return all the metadata I want to extract.
@@ -257,7 +281,7 @@ class LibraryBrowser:
         #       </a>
         #
         # That's the URL we need to open to get availability info.
-        availability_elem = fieldset.find("div", attrs={"class": "availability"})
+        availability_elem = fieldset.find("div", attrs={"class": "availability"})  
         availability_url = availability_elem.find("a").attrs["href"]
         availability = self.get_availability_info(availability_url)
 
@@ -270,7 +294,7 @@ class LibraryBrowser:
             "availability": availability,
         }
 
-    def get_record_details(self, url: str) -> str:
+    def get_record_details(self, url: str) -> dict[str, list[typing.Any]]:
         """
         Given the URL to a book's page in the current browser session,
         get all the record details, which are shown as a table on the page.
@@ -313,6 +337,7 @@ class LibraryBrowser:
         #         …
         #
         rec_details_body = soup.find("div", attrs={"id": "tabRECDETAILS-body"})
+        assert isinstance(rec_details_body, bs4.Tag)
 
         record_details = {}
 
@@ -356,18 +381,18 @@ class LibraryBrowser:
         #     </div>
         #
         try:
+            summary_div = soup.find("div", attrs={"id": "divtabSUMMARY"})
+            assert isinstance(summary_div, bs4.Tag)
+
             record_details["Summary"] = [
-                span.getText()
-                for span in soup.find("div", attrs={"id": "divtabSUMMARY"}).find_all(
-                    "span"
-                )
+                span.getText() for span in summary_div.find_all("span")
             ]
         except AttributeError:
             record_details["Summary"] = []
 
         return record_details
 
-    def get_availability_info(self, availability_url):
+    def get_availability_info(self, availability_url: str) -> list[AvailabilityInfo]:
         soup = self._get_soup(availability_url)
 
         availability = []
@@ -384,12 +409,15 @@ class LibraryBrowser:
                 ("call_number", "Call number"),
             ]
 
-            info = {
-                key: row.find("td", attrs={"data-caption": caption}).text
-                if row.find("td", attrs={"data-caption": caption})
-                else ""
-                for (key, caption) in fields
+            elements: dict[str, bs4.BeautifulSoup | None] = {
+                key: row.find("td", attrs={"data-caption": caption})
+                for key, caption in fields
             }
+
+            info: AvailabilityInfo = typing.cast(
+                AvailabilityInfo,
+                {key: elem.text if elem else "" for key, elem in elements.items()},
+            )
 
             if "(Hertfordshire County Council)" not in info["location"]:
                 continue
@@ -408,11 +436,8 @@ if __name__ == "__main__":
         username = os.environ["LIBRARY_CARD_NUMBER"]
         password = os.environ["LIBRARY_CARD_PASSWORD"]
     except KeyError:
-        username = keyring.get_password("library", "username")
-        password = keyring.get_password("library", "password")
-
-    assert isinstance(username, str)
-    assert isinstance(password, str)
+        username = get_required_password("library", "username")
+        password = get_required_password("library", "password")
 
     browser = LibraryBrowser(
         base_url="https://herts.spydus.co.uk", username=username, password=password

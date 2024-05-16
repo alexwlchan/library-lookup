@@ -4,3 +4,4 @@
 books.json
 covers
 _html
+*.egg-info

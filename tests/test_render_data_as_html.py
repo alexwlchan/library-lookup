@@ -12,5 +12,5 @@ from render_data_as_html import display_author_name
         ("Various authors", "Various authors"),
     ],
 )
-def test_display_author_name(label, display_label):
+def test_display_author_name(label: str, display_label: str) -> None:
     assert display_author_name(label) == display_label
