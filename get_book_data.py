@@ -19,6 +19,7 @@ from tenacity import retry, stop_after_attempt, wait_exponential
 import tqdm
 
 from library_lookup import get_required_password, StrictSoup, StrictTag
+from library_lookup.parsers import AvailabilityInfo, parse_availability_info
 
 
 def save_image_locally(img_element: StrictTag) -> str | None:
@@ -76,13 +77,6 @@ def is_retryable(exc: Exception) -> bool:
 class DefaultList(typing.TypedDict):
     count: int
     url: str
-
-
-class AvailabilityInfo(typing.TypedDict):
-    location: str
-    collection: str
-    status: str
-    call_number: str
 
 
 RecordDetails: typing.TypeAlias = dict[str, str | list[str]]
@@ -291,7 +285,10 @@ class LibraryBrowser:
         # That's the URL we need to open to get availability info.
         availability_elem = fieldset.find("div", attrs={"class": "availability"})
         availability_url = availability_elem.find("a").attrs["href"]
-        availability = self.get_availability_info(availability_url)
+
+        soup = self._get_soup(availability_url)
+
+        availability = parse_availability_info(soup._underlying)
 
         return {
             "title": title,
@@ -388,7 +385,6 @@ class LibraryBrowser:
         #
         try:
             summary_div = soup.find("div", attrs={"id": "divtabSUMMARY"})
-            assert isinstance(summary_div, bs4.Tag)
 
             record_details["Summary"] = [
                 span.getText() for span in summary_div.find_all("span")
@@ -397,44 +393,6 @@ class LibraryBrowser:
             record_details["Summary"] = []
 
         return record_details
-
-    def get_availability_info(self, availability_url: str) -> list[AvailabilityInfo]:
-        soup = self._get_soup(availability_url)
-
-        availability = []
-
-        # There's a table with four columns:
-        # Location/Collection/Call number/Status
-        #
-        # I'm mainly interested in location and status
-        for row in soup.find("table").find("tbody").find_all("tr"):
-            fields = [
-                ("location", "Location"),
-                ("collection", "Collection"),
-                ("status", "Status/Desc"),
-                ("call_number", "Call number"),
-            ]
-
-            elements: dict[str, StrictTag | None] = {
-                key: row.find("td", attrs={"data-caption": caption})
-                for key, caption in fields
-            }
-
-            info: AvailabilityInfo = typing.cast(
-                AvailabilityInfo,
-                {key: elem.text if elem else "" for key, elem in elements.items()},
-            )
-
-            if "(Hertfordshire County Council)" not in info["location"]:
-                continue
-
-            info["location"] = info["location"].replace(
-                " (Hertfordshire County Council)", ""
-            )
-
-            availability.append(info)
-
-        return availability
 
 
 if __name__ == "__main__":
