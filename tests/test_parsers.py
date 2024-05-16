@@ -7,8 +7,6 @@ def test_it_gets_missing_info() -> None:
     with open("tests/fixtures/availability.html") as in_file:
         soup = bs4.BeautifulSoup(in_file.read(), "html.parser")
 
-    print(parse_availability_info(soup))
-
     assert parse_availability_info(soup) == [
         {
             "location": "St Albans Library",
