@@ -230,7 +230,7 @@ class LibraryBrowser:
                     print(f"Unable to get info from {fieldset!r}", file=sys.stderr)
                     raise
 
-    def parse_fieldset_info(self, fieldset: StrictSoup) -> FieldsetInfo:
+    def parse_fieldset_info(self, fieldset: StrictTag) -> FieldsetInfo:
         """
         Given a <fieldset> element from the list of books in a saved list,
         return all the metadata I want to extract.
