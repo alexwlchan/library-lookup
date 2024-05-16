@@ -342,7 +342,6 @@ class LibraryBrowser:
         #         …
         #
         rec_details_body = soup.find("div", attrs={"id": "tabRECDETAILS-body"})
-        assert isinstance(rec_details_body, bs4.Tag)
 
         record_details = {}
 
