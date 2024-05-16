@@ -17,16 +17,17 @@ import mechanize
 from tenacity import retry, stop_after_attempt, wait_exponential
 import tqdm
 
-from library_lookup import get_required_password, StrictSoup, StrictTag
+from library_lookup import get_required_password
 from library_lookup.parsers import (
     AvailabilityInfo,
     RecordDetails,
+    get_url_of_next_page,
     parse_availability_info,
     parse_record_details,
 )
 
 
-def save_image_locally(img_element: StrictTag) -> str | None:
+def save_image_locally(img_element: bs4.Tag) -> str | None:
     """
     Downloads a local copy of an image, and returns the path.
     """
@@ -132,7 +133,7 @@ class LibraryBrowser:
         retry=is_retryable,  # type: ignore
         wait=wait_exponential(multiplier=1, min=1, max=15),
     )
-    def _get_soup(self, url: str) -> StrictSoup:
+    def _get_soup(self, url: str) -> bs4.BeautifulSoup:
         """
         Open a URL and parse the HTML with BeautifulSoup.
         """
@@ -141,7 +142,7 @@ class LibraryBrowser:
         else:
             resp = self.browser.open(url)
 
-        return StrictSoup(soup=bs4.BeautifulSoup(resp, "html.parser"))
+        return bs4.BeautifulSoup(resp, "html.parser")
 
     @functools.cache
     def get_default_list(self) -> DefaultList:
@@ -172,7 +173,7 @@ class LibraryBrowser:
 
         return {"count": count, "url": url}
 
-    def get_pages_in_list(self, url: str) -> Iterable[StrictSoup]:
+    def get_pages_in_list(self, url: str) -> Iterable[bs4.BeautifulSoup]:
         """
         Given a paginated list, fetch each page of the list in turn
         and generate the HTML as parsed by BeautifulSoup.
@@ -180,27 +181,17 @@ class LibraryBrowser:
             :param url: The first page of he list.
 
         """
-        while True:
+        while url is not None:
             soup = self._get_soup(url)
 
             yield soup
 
-            # Now look for a link to the next page, if there is one.
-            #
-            #     <nav class="prvnxt result-pages-prvnxt">
-            #       <ul class="list-inline mb-0">
-            #         <li class="list-inline-item prv">Previous</li>
-            #         <li class="list-inline-item nxt">
-            #           <a href="/cgi-bin/spydus.exe/…">Next</a>
-            #         </li>
-            #
-            pagination_nav = soup.find("nav", attrs={"class": "result-pages-prvnxt"})
-            next_link = pagination_nav.find("li", attrs={"class": "nxt"}).find("a")
+            url_of_next_page = get_url_of_next_page(soup)
 
-            if next_link is None:
+            if url_of_next_page is None:
                 break
 
-            url = next_link.attrs["href"]
+            url = url_of_next_page
 
     def get_books_in_list(self, url: str) -> Iterable[FieldsetInfo]:
         """
@@ -220,6 +211,7 @@ class LibraryBrowser:
             #       …
             #
             result_content_list = soup.find("div", attrs={"id": "result-content-list"})
+            assert isinstance(result_content_list, bs4.Tag)
 
             for fieldset in result_content_list.find_all("fieldset"):
                 try:
@@ -228,19 +220,24 @@ class LibraryBrowser:
                     print(f"Unable to get info from {fieldset!r}", file=sys.stderr)
                     raise
 
-    def parse_fieldset_info(self, fieldset: StrictTag) -> FieldsetInfo:
+    def parse_fieldset_info(self, fieldset: bs4.Tag) -> FieldsetInfo:
         """
         Given a <fieldset> element from the list of books in a saved list,
         return all the metadata I want to extract.
         """
         title_elem = fieldset.find("h2", attrs={"class": "card-title"})
+        assert isinstance(title_elem, bs4.Tag)
         title = title_elem.getText()
 
-        url = title_elem.find("a").attrs["href"]
-        print(url)
+        anchor_elem = title_elem.find("a")
+        assert isinstance(anchor_elem, bs4.Tag)
+        url = anchor_elem.attrs["href"]
+
         record_details = self.get_record_details(url)
 
-        image = save_image_locally(fieldset.find("img"))
+        img_elem = fieldset.find("img")
+        assert isinstance(img_elem, bs4.Tag)
+        image = save_image_locally(img_elem)
 
         # The author and publication year are in a block like so:
         #
@@ -250,6 +247,7 @@ class LibraryBrowser:
         #     </div>
         #
         recdetail_div = fieldset.find("div", attrs={"class": "recdetails"})
+        assert isinstance(recdetail_div, bs4.Tag)
         recdetail_spans = recdetail_div.find_all("span")
 
         if (
@@ -286,7 +284,11 @@ class LibraryBrowser:
         #
         # That's the URL we need to open to get availability info.
         availability_elem = fieldset.find("div", attrs={"class": "availability"})
-        availability_url = availability_elem.find("a").attrs["href"]
+        assert isinstance(availability_elem, bs4.Tag)
+
+        availability_link_elem = availability_elem.find("a")
+        assert isinstance(availability_link_elem, bs4.Tag)
+        availability_url = availability_link_elem.attrs["href"]
 
         soup = self._get_soup(availability_url)
 
@@ -323,7 +325,7 @@ class LibraryBrowser:
         """
         soup = self._get_soup(url)
 
-        return parse_record_details(soup._underlying, url=url)
+        return parse_record_details(soup, url=url)
 
 
 if __name__ == "__main__":

@@ -134,3 +134,28 @@ def parse_record_details(soup: bs4.BeautifulSoup, *, url: str) -> RecordDetails:
         record_details["Summary"] = []
 
     return record_details
+
+
+def get_url_of_next_page(soup: bs4.BeautifulSoup) -> str | None:
+    # Now look for a link to the next page, if there is one.
+    #
+    #     <nav class="prvnxt result-pages-prvnxt">
+    #       <ul class="list-inline mb-0">
+    #         <li class="list-inline-item prv">Previous</li>
+    #         <li class="list-inline-item nxt">
+    #           <a href="/cgi-bin/spydus.exe/…">Next</a>
+    #         </li>
+    #
+    pagination_nav = soup.find("nav", attrs={"class": "result-pages-prvnxt"})
+    assert isinstance(pagination_nav, bs4.Tag)
+
+    nxt_li_elem = pagination_nav.find("li", attrs={"class": "nxt"})
+    if nxt_li_elem is None:
+        return None
+
+    anchor_elem = nxt_li_elem.find("a")
+    if anchor_elem is None:
+        return None
+
+    assert isinstance(anchor_elem, bs4.Tag)
+    return anchor_elem.attrs["href"]
