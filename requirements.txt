@@ -71,7 +71,7 @@ tenacity==8.3.0
     # via -r requirements.in
 titlecase==2.4.1
     # via -r requirements.in
-tqdm==4.66.1
+tqdm==4.66.4
     # via -r requirements.in
 webencodings==0.5.1
     # via html5lib
