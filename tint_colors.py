@@ -2,20 +2,20 @@ import json
 import subprocess
 
 
-def from_hex(hs):
+def from_hex(hs: str) -> tuple[int, int, int]:
     """
     Returns an RGB tuple from a hex string, e.g. #ff0102 -> (255, 1, 2)
     """
     return int(hs[1:3], 16), int(hs[3:5], 16), int(hs[5:7], 16)
 
 
-def choose_tint_color_for_file(path):
+def choose_tint_color_for_file(path: str) -> str:
     """
     Returns the tint colour for a file.
     """
     try:
         with open("colors.json") as infile:
-            cached_colors = json.load(infile)
+            cached_colors: dict[str, str] = json.load(infile)
     except FileNotFoundError:
         cached_colors = {}
 

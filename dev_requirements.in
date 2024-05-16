@@ -3,6 +3,9 @@
 black
 coverage
 flake8
+mypy
 pip-tools
 pytest
 pytest-cov
+types-beautifulsoup4
+types-tqdm
