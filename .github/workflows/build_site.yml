@@ -5,6 +5,10 @@ on:
     branches:
     - "main"
 
+    paths-ignore:
+      - 'dev_requirements.in'
+      - 'dev_requirements.txt'
+
   # rebuild once a day at 7:30 UTC
   schedule:
     - cron: "30 7 * * *"
