@@ -19,6 +19,7 @@ from tenacity import retry, stop_after_attempt, wait_exponential
 import tqdm
 
 from library_lookup import get_required_password, StrictSoup, StrictTag
+from library_lookup.parsers import AvailabilityInfo, parse_availability_info
 
 
 def save_image_locally(img_element: StrictTag) -> str | None:
@@ -78,16 +79,12 @@ class DefaultList(typing.TypedDict):
     url: str
 
 
-class AvailabilityInfo(typing.TypedDict):
-    location: str
-    collection: str
-    status: str
-    call_number: str
+RecordDetails: typing.TypeAlias = dict[str, str | list[str]]
 
 
 class FieldsetInfo(typing.TypedDict):
     title: str
-    record_details: dict[str, list[typing.Any]]
+    record_details: RecordDetails
     image: str | None
     author: str | None
     publication_year: str | None
@@ -288,7 +285,12 @@ class LibraryBrowser:
         # That's the URL we need to open to get availability info.
         availability_elem = fieldset.find("div", attrs={"class": "availability"})
         availability_url = availability_elem.find("a").attrs["href"]
-        availability = self.get_availability_info(availability_url)
+
+        soup = self._get_soup(availability_url)
+
+        availability = parse_availability_info(
+            typing.cast(bs4.BeautifulSoup, soup._underlying)
+        )
 
         return {
             "title": title,
@@ -299,7 +301,7 @@ class LibraryBrowser:
             "availability": availability,
         }
 
-    def get_record_details(self, url: str) -> dict[str, list[typing.Any]]:
+    def get_record_details(self, url: str) -> RecordDetails:
         """
         Given the URL to a book's page in the current browser session,
         get all the record details, which are shown as a table on the page.
@@ -342,9 +344,8 @@ class LibraryBrowser:
         #         …
         #
         rec_details_body = soup.find("div", attrs={"id": "tabRECDETAILS-body"})
-        assert isinstance(rec_details_body, bs4.Tag)
 
-        record_details = {}
+        record_details: RecordDetails = {}
 
         for row in rec_details_body.find_all("div", attrs={"class": "row"}):
             caption_text = row.find("div", attrs={"class": "fd-caption"}).getText()
@@ -372,11 +373,10 @@ class LibraryBrowser:
                 "Subject",
             }:
                 if len(value) == 1:
-                    value = value[0]
+                    record_details[key] = value[0]
                 else:
                     print(f"Record detail had multiple entries for {key}: {url}")
-
-            record_details[key] = value
+                    record_details[key] = value
 
         # There's also a summary on the page, which unlike the search
         # results, isn't truncated.  e.g.
@@ -387,7 +387,6 @@ class LibraryBrowser:
         #
         try:
             summary_div = soup.find("div", attrs={"id": "divtabSUMMARY"})
-            assert isinstance(summary_div, bs4.Tag)
 
             record_details["Summary"] = [
                 span.getText() for span in summary_div.find_all("span")
@@ -396,44 +395,6 @@ class LibraryBrowser:
             record_details["Summary"] = []
 
         return record_details
-
-    def get_availability_info(self, availability_url: str) -> list[AvailabilityInfo]:
-        soup = self._get_soup(availability_url)
-
-        availability = []
-
-        # There's a table with four columns:
-        # Location/Collection/Call number/Status
-        #
-        # I'm mainly interested in location and status
-        for row in soup.find("table").find("tbody").find_all("tr"):
-            fields = [
-                ("location", "Location"),
-                ("collection", "Collection"),
-                ("status", "Status/Desc"),
-                ("call_number", "Call number"),
-            ]
-
-            elements: dict[str, StrictTag | None] = {
-                key: row.find("td", attrs={"data-caption": caption})
-                for key, caption in fields
-            }
-
-            info: AvailabilityInfo = typing.cast(
-                AvailabilityInfo,
-                {key: elem.text if elem else "" for key, elem in elements.items()},
-            )
-
-            if "(Hertfordshire County Council)" not in info["location"]:
-                continue
-
-            info["location"] = info["location"].replace(
-                " (Hertfordshire County Council)", ""
-            )
-
-            availability.append(info)
-
-        return availability
 
 
 if __name__ == "__main__":

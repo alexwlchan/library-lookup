@@ -13,7 +13,7 @@ class StrictSoup:
 
     def find(self, name: str, *, attrs: dict[str, str] | None = None) -> "StrictTag":
         tag = self._underlying.find(name, attrs=attrs or {})
-        assert isinstance(tag, bs4.Tag)
+        assert isinstance(tag, bs4.Tag), type(tag)
         return StrictTag(tag=tag)
 
 
@@ -23,11 +23,13 @@ class StrictTag:
 
     def find(self, name: str, *, attrs: dict[str, str] | None = None) -> "StrictTag":
         tag = self._underlying.find(name, attrs=attrs or {})
-        assert isinstance(tag, bs4.Tag)
+        assert isinstance(tag, bs4.Tag), type(tag)
         return StrictTag(tag=tag)
 
-    def find_all(self, name: str) -> list["StrictTag"]:
-        found_tags = self._underlying.find_all(name)
+    def find_all(
+        self, name: str, attrs: dict[str, str] | None = None
+    ) -> list["StrictTag"]:
+        found_tags = self._underlying.find_all(name, attrs=attrs or {})
         assert all(isinstance(tag, bs4.Tag) for tag in found_tags)
         return [StrictTag(tag=tag) for tag in found_tags]
 
