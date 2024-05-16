@@ -5,7 +5,6 @@ import datetime
 import functools
 import json
 import os
-import re
 import sys
 import typing
 from urllib.error import HTTPError, URLError
@@ -19,7 +18,12 @@ from tenacity import retry, stop_after_attempt, wait_exponential
 import tqdm
 
 from library_lookup import get_required_password, StrictSoup, StrictTag
-from library_lookup.parsers import AvailabilityInfo, parse_availability_info
+from library_lookup.parsers import (
+    AvailabilityInfo,
+    RecordDetails,
+    parse_availability_info,
+    parse_record_details,
+)
 
 
 def save_image_locally(img_element: StrictTag) -> str | None:
@@ -77,9 +81,6 @@ def is_retryable(exc: Exception) -> bool:
 class DefaultList(typing.TypedDict):
     count: int
     url: str
-
-
-RecordDetails: typing.TypeAlias = dict[str, str | list[str]]
 
 
 class FieldsetInfo(typing.TypedDict):
@@ -236,6 +237,7 @@ class LibraryBrowser:
         title = title_elem.getText()
 
         url = title_elem.find("a").attrs["href"]
+        print(url)
         record_details = self.get_record_details(url)
 
         image = save_image_locally(fieldset.find("img"))
@@ -321,80 +323,7 @@ class LibraryBrowser:
         """
         soup = self._get_soup(url)
 
-        # This is the rough structure of the HTML that renders the
-        # "Record details" table (or at least the bits we care about):
-        #
-        #       <div id="tabRECDETAILS-body" …>
-        #         <div class="row">
-        #           <div class="col-sm-3 col-md-3 fd-caption">
-        #             <span>Main title:</span>
-        #           </div>
-        #           <div class="col pl-sm-0">
-        #             <span class="d-block"><a href="/cgi-bin/spydus.exe/ENQ/…"><span>A Cuban girl's guide to tea and tomorrow</span></a> / Laura Taylor Namey.</span>
-        #           </div>
-        #         </div>
-        #         <div class="row">
-        #           <div class="col-sm-3 col-md-3 fd-caption">
-        #             <span>Imprint:</span>
-        #           </div>
-        #           <div class="col pl-sm-0">
-        #             <span class="d-block">London : Simon & Schuster, 2022.</span>
-        #           </div>
-        #         </div>
-        #         …
-        #
-        rec_details_body = soup.find("div", attrs={"id": "tabRECDETAILS-body"})
-
-        record_details: RecordDetails = {}
-
-        for row in rec_details_body.find_all("div", attrs={"class": "row"}):
-            caption_text = row.find("div", attrs={"class": "fd-caption"}).getText()
-
-            # Strip the trailing colon
-            key = re.sub(r":$", "", caption_text.strip())
-
-            # There may be multiple rows, e.g. "Subject" and "Dewey Class"
-            value = [
-                span.getText().strip()
-                for span in row.find_all("span", attrs={"class": "d-block"})
-            ]
-
-            # If there's a single value and we're not expecting multiple
-            # values in this field, just get the single value.
-            if key not in {
-                "Added title",
-                "Author",
-                "Dewey class",
-                "Language",
-                "Local class",
-                "More Information",
-                "Notes",
-                "Series title",
-                "Subject",
-            }:
-                if len(value) == 1:
-                    record_details[key] = value[0]
-                else:
-                    print(f"Record detail had multiple entries for {key}: {url}")
-                    record_details[key] = value
-
-        # There's also a summary on the page, which unlike the search
-        # results, isn't truncated.  e.g.
-        #
-        #     <div id="divtabSUMMARY" class="tab-container-body-inner">
-        #       <span class="d-block">Anna Hart is a seasoned …</span>
-        #     </div>
-        #
-        try:
-            summary_div = soup.find("div", attrs={"id": "divtabSUMMARY"})
-
-            record_details["Summary"] = [
-                span.getText() for span in summary_div.find_all("span")
-            ]
-        except AttributeError:
-            record_details["Summary"] = []
-
-        return record_details
+        return parse_record_details(soup._underlying, url=url)
 
 
 if __name__ == "__main__":
