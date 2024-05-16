@@ -288,7 +288,9 @@ class LibraryBrowser:
 
         soup = self._get_soup(availability_url)
 
-        availability = parse_availability_info(soup._underlying)
+        availability = parse_availability_info(
+            typing.cast(bs4.BeautifulSoup, soup._underlying)
+        )
 
         return {
             "title": title,
