@@ -18,10 +18,10 @@ import mechanize
 from tenacity import retry, stop_after_attempt, wait_exponential
 import tqdm
 
-from library_lookup import get_required_password
+from library_lookup import get_required_password, StrictSoup, StrictTag
 
 
-def save_image_locally(img_element: bs4.BeautifulSoup) -> str:
+def save_image_locally(img_element: StrictTag) -> str | None:
     """
     Downloads a local copy of an image, and returns the path.
     """
@@ -35,6 +35,8 @@ def save_image_locally(img_element: bs4.BeautifulSoup) -> str:
 
     try:
         isbn = url.get("ISBN")[0]
+        assert isinstance(isbn, str)
+
         existing_image = next(p for p in os.listdir("covers") if p.startswith(isbn))
         return os.path.join("covers", existing_image)
     except (IndexError, StopIteration):
@@ -53,7 +55,7 @@ def save_image_locally(img_element: bs4.BeautifulSoup) -> str:
     out_path = os.path.join("covers", os.path.basename(image_resp.url.path))
 
     if os.path.basename(image_resp.url.path) == "blank.gif":
-        return
+        return None
 
     with open(out_path, "wb") as out_file:
         out_file.write(image_resp.content)
@@ -86,7 +88,7 @@ class AvailabilityInfo(typing.TypedDict):
 class FieldsetInfo(typing.TypedDict):
     title: str
     record_details: dict[str, list[typing.Any]]
-    image: str
+    image: str | None
     author: str | None
     publication_year: str | None
     availability: list[AvailabilityInfo]
@@ -129,10 +131,10 @@ class LibraryBrowser:
 
     @retry(
         stop=stop_after_attempt(5),
-        retry=is_retryable,
+        retry=is_retryable,  # type: ignore
         wait=wait_exponential(multiplier=1, min=1, max=15),
     )
-    def _get_soup(self, url: str) -> bs4.BeautifulSoup:
+    def _get_soup(self, url: str) -> StrictSoup:
         """
         Open a URL and parse the HTML with BeautifulSoup.
         """
@@ -141,7 +143,7 @@ class LibraryBrowser:
         else:
             resp = self.browser.open(url)
 
-        return bs4.BeautifulSoup(resp, "html.parser")
+        return StrictSoup(soup=bs4.BeautifulSoup(resp, "html.parser"))
 
     @functools.cache
     def get_default_list(self) -> DefaultList:
@@ -163,13 +165,16 @@ class LibraryBrowser:
         # Finally, a table which has my lists.  There's only one, which
         # is titled "Default".  Make a note of the URL and the title count.
         soup = bs4.BeautifulSoup(resp, "html.parser")
-        count = int(soup.find("td", attrs={"data-caption": "Titles"}).text)
+
+        titles_elem = soup.find("td", attrs={"data-caption": "Titles"})
+        assert titles_elem is not None
+        count = int(titles_elem.text)
 
         url = self.browser.find_link(text="Default").absolute_url
 
         return {"count": count, "url": url}
 
-    def get_pages_in_list(self, url: str) -> Iterable[bs4.BeautifulSoup]:
+    def get_pages_in_list(self, url: str) -> Iterable[StrictSoup]:
         """
         Given a paginated list, fetch each page of the list in turn
         and generate the HTML as parsed by BeautifulSoup.
@@ -199,7 +204,7 @@ class LibraryBrowser:
 
             url = next_link.attrs["href"]
 
-    def get_books_in_list(self, url: str) -> Iterable[bs4.BeautifulSoup]:
+    def get_books_in_list(self, url: str) -> Iterable[FieldsetInfo]:
         """
         Generate a list of books in a list, which is all the books
         I've marked with a bookmark icon.
@@ -225,7 +230,7 @@ class LibraryBrowser:
                     print(f"Unable to get info from {fieldset!r}", file=sys.stderr)
                     raise
 
-    def parse_fieldset_info(self, fieldset: bs4.BeautifulSoup) -> FieldsetInfo:
+    def parse_fieldset_info(self, fieldset: StrictSoup) -> FieldsetInfo:
         """
         Given a <fieldset> element from the list of books in a saved list,
         return all the metadata I want to extract.
@@ -281,7 +286,7 @@ class LibraryBrowser:
         #       </a>
         #
         # That's the URL we need to open to get availability info.
-        availability_elem = fieldset.find("div", attrs={"class": "availability"})  
+        availability_elem = fieldset.find("div", attrs={"class": "availability"})
         availability_url = availability_elem.find("a").attrs["href"]
         availability = self.get_availability_info(availability_url)
 
@@ -409,7 +414,7 @@ class LibraryBrowser:
                 ("call_number", "Call number"),
             ]
 
-            elements: dict[str, bs4.BeautifulSoup | None] = {
+            elements: dict[str, StrictTag | None] = {
                 key: row.find("td", attrs={"data-caption": caption})
                 for key, caption in fields
             }
