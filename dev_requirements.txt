@@ -76,6 +76,7 @@ jaraco-functools==4.0.1
 jeepney==0.8.0
     # via
     #   -r requirements.txt
+    #   keyring
     #   secretstorage
 jinja2==3.1.4
     # via -r requirements.txt
@@ -109,7 +110,7 @@ pathspec==0.12.1
     # via black
 pillow==10.3.0
     # via -r requirements.txt
-pip-tools==7.3.0
+pip-tools==7.4.1
     # via -r dev_requirements.in
 platformdirs==4.1.0
     # via black
@@ -124,7 +125,9 @@ pycparser==2.22
 pyflakes==3.2.0
     # via flake8
 pyproject-hooks==1.0.0
-    # via build
+    # via
+    #   build
+    #   pip-tools
 pytest==8.2.0
     # via
     #   -r dev_requirements.in
@@ -132,7 +135,9 @@ pytest==8.2.0
 pytest-cov==5.0.0
     # via -r dev_requirements.in
 secretstorage==3.3.3
-    # via -r requirements.txt
+    # via
+    #   -r requirements.txt
+    #   keyring
 six==1.16.0
     # via
     #   -r requirements.txt
