@@ -1,9 +1,7 @@
 -r requirements.txt
 
-black
-coverage
-flake8
 mypy
+ruff
 pytest
 pytest-cov
 types-beautifulsoup4
