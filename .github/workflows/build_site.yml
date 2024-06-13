@@ -6,6 +6,8 @@ on:
     - "main"
 
     paths-ignore:
+      - '.github/workflows/run_tests.yml'
+      - '.github/dependabot.yml'
       - 'dev_requirements.in'
       - 'dev_requirements.txt'
       - 'tests/**'
