@@ -1,3 +1,5 @@
+-e file:.
+
 beautifulsoup4
 httpx
 hyperlink

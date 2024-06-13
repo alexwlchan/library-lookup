@@ -48,3 +48,11 @@ class TestParseRecordDetails:
         }
 
         assert actual == expected
+
+    def test_it_handles_multiple_entries_for_isbn(self) -> None:
+        soup = get_fixture("isbn_9781847442260.html")
+
+        details = parse_record_details(
+            soup, url="/cgi-bin/spydus.exe/FULL/WPAC/ALLENQ/126638/71101226,44"
+        )
+        assert details["ISBN"] == ["9781847442260 (hbk)", "9781405517386 (ePub ebook)"]
