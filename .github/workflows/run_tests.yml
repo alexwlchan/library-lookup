@@ -25,9 +25,7 @@ jobs:
           cache-dependency-path: dev_requirements.txt
 
       - name: "Install dependencies"
-        run: |
-          python3 -m pip install -e .
-          python3 -m pip install -r dev_requirements.txt
+        run: python3 -m pip install -r dev_requirements.txt
 
       - name: Run linting
         run: |
