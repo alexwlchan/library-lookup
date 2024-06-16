@@ -150,8 +150,7 @@ def get_url_of_next_page(soup: bs4.BeautifulSoup) -> str | None:
     assert isinstance(pagination_nav, bs4.Tag)
 
     nxt_li_elem = pagination_nav.find("li", attrs={"class": "nxt"})
-    if nxt_li_elem is None:
-        return None
+    assert nxt_li_elem is not None
 
     anchor_elem = nxt_li_elem.find("a")
     if anchor_elem is None:

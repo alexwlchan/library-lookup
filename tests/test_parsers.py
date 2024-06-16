@@ -2,7 +2,11 @@ import os
 
 import bs4
 
-from library_lookup.parsers import parse_availability_info, parse_record_details
+from library_lookup.parsers import (
+    get_url_of_next_page,
+    parse_availability_info,
+    parse_record_details,
+)
 
 
 def get_fixture(fixture_name: str) -> bs4.BeautifulSoup:
@@ -56,3 +60,28 @@ class TestParseRecordDetails:
             soup, url="/cgi-bin/spydus.exe/FULL/WPAC/ALLENQ/126638/71101226,44"
         )
         assert details["ISBN"] == ["9781847442260 (hbk)", "9781405517386 (ePub ebook)"]
+
+
+class TestGetUrlOfNextPage:
+    def test_it_finds_the_next_url(self) -> None:
+        soup = bs4.BeautifulSoup(
+            """
+            <div class="col col-md text-md-center mt-2 mt-md-0"><nav class="prvnxt result-pages-prvnxt" aria-label="Search results previous and next pages"><ul class="list-inline mb-0"><li class="list-inline-item prv"><span><span class="fas fa-chevron-left mr-2"><span></span></span>Previous<span class="sr-only"> page of search results</span></span></li><li class="list-inline-item nxt"><a href="/cgi-bin/spydus.exe/SET/WPAC/ALLENQ/313828/71369607?NREC=20">Next<span class="sr-only"> page of search results</span><span class="fas fa-chevron-right ml-2"><span></span></span></a></li></ul></nav></div>
+            """,
+            "html.parser",
+        )
+
+        assert (
+            get_url_of_next_page(soup)
+            == "/cgi-bin/spydus.exe/SET/WPAC/ALLENQ/313828/71369607?NREC=20"
+        )
+
+    def test_it_returns_none_on_the_final_page(self) -> None:
+        soup = bs4.BeautifulSoup(
+            """
+            <div class="col col-md text-md-center mt-2 mt-md-0"><nav class="prvnxt result-pages-prvnxt" aria-label="Search results previous and next pages"><ul class="list-inline mb-0"><li class="list-inline-item prv"><a href="/cgi-bin/spydus.exe/SET/WPAC/ALLENQ/313828/491841463?NREC=160&amp;NAVDIR=-1"><span class="fas fa-chevron-left mr-2"><span></span></span>Previous<span class="sr-only"> page of search results</span></a></li><li class="list-inline-item nxt"><span>Next<span class="sr-only"> page of search results</span><span class="fas fa-chevron-right ml-2"><span></span></span></span></li></ul></nav></div>
+            """,
+            "html.parser",
+        )
+
+        assert get_url_of_next_page(soup) is None
