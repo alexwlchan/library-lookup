@@ -328,14 +328,14 @@ class LibraryBrowser:
 
 if __name__ == "__main__":
     try:
-        username = os.environ["LIBRARY_CARD_NUMBER"]
-        password = os.environ["LIBRARY_CARD_PASSWORD"]
+        username: str | None = os.environ["LIBRARY_CARD_NUMBER"]
+        password: str | None = os.environ["LIBRARY_CARD_PASSWORD"]
     except KeyError:
         username = keyring.get_password("library", "username")
-        assert username is not None, "Could not get username from keychain!"
-
         password = keyring.get_password("library", "password")
-        assert password is not None, "Could not get password from keychain!"
+
+    assert username is not None, "Could not get username!"
+    assert password is not None, "Could not get password!"
 
     browser = LibraryBrowser(
         base_url="https://herts.spydus.co.uk", username=username, password=password
