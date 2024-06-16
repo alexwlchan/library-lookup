@@ -13,11 +13,11 @@ import bs4
 import certifi
 import httpx
 import hyperlink
-import keyring
 import mechanize
 from tenacity import retry, stop_after_attempt, wait_exponential
 import tqdm
 
+from library_lookup import get_required_password
 from library_lookup.parsers import (
     AvailabilityInfo,
     RecordDetails,
@@ -331,11 +331,8 @@ if __name__ == "__main__":
         username = os.environ["LIBRARY_CARD_NUMBER"]
         password = os.environ["LIBRARY_CARD_PASSWORD"]
     except KeyError:
-        username = keyring.get_password("library", "username")
-        assert username is not None, "Could not get username from keychain!"
-
-        password = keyring.get_password("library", "password")
-        assert password is not None, "Could not get password from keychain!"
+        username = get_required_password("library", "username")
+        password = get_required_password("library", "password")
 
     browser = LibraryBrowser(
         base_url="https://herts.spydus.co.uk", username=username, password=password
