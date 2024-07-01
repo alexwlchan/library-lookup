@@ -51,7 +51,7 @@ more-itertools==10.1.0
     # via
     #   jaraco-classes
     #   jaraco-functools
-pillow==10.3.0
+pillow==10.4.0
     # via -r requirements.in
 pycparser==2.22
     # via cffi
