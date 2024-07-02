@@ -119,7 +119,7 @@ class LibraryBrowser:
         #
         self.browser.set_ca_data(cafile=certifi.where())
 
-        self.browser.open(self.base_url).read()
+        homepage_html = self.browser.open(self.base_url).read()
 
         try:
             self.browser.select_form(
@@ -127,6 +127,19 @@ class LibraryBrowser:
             )
         except mechanize.FormNotFoundError:
             print("Unable to find login form!", file=sys.stderr)
+
+            # This is based on a maintenance page seen on 2 July 2024
+            #
+            # We can't fetch any book data, and we can't do anything else --
+            # let the script stop gracefully rather than reporting an error
+            # I can't do anything about.
+            soup = bs4.BeautifulSoup(homepage_html, "html.parser")
+            title = soup.find("title")
+            assert title is not None
+            if title.text == "We're down for maintenance":
+                print("Library website is down for maintenance, cannot fetch")
+                sys.exit(0)
+
             sys.exit(1)
 
         self.browser.set_value(username, name="BRWLID")
