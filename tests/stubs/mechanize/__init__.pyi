@@ -2,8 +2,10 @@ import typing
 
 from ._http import HTTPRefreshProcessor
 
+class FormNotFoundError(Exception): ...
+
 class Readable(str):
-    def read(self) -> None: ...
+    def read(self) -> str: ...
 
 class FoundLink:
     @property
