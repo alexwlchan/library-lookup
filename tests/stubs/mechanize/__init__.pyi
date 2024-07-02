@@ -2,6 +2,8 @@ import typing
 
 from ._http import HTTPRefreshProcessor
 
+class FormNotFoundError(Exception): ...
+
 class Readable(str):
     def read(self) -> None: ...
 
