@@ -121,9 +121,14 @@ class LibraryBrowser:
 
         self.browser.open(self.base_url).read()
 
-        self.browser.select_form(
-            predicate=lambda form: form.attrs.get("id") == "frmLogin"
-        )
+        try:
+            self.browser.select_form(
+                predicate=lambda form: form.attrs.get("id") == "frmLogin"
+            )
+        except mechanize.FormNotFoundError:
+            print("Unable to find login form!", file=sys.stderr)
+            sys.exit(1)
+
         self.browser.set_value(username, name="BRWLID")
         self.browser.set_value(password, name="BRWLPWD")
         self.browser.submit().read()
