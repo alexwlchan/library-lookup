@@ -1,6 +1,6 @@
 import typing
 
-from ._http import HTTPRefreshProcessor
+from mechanize._http import HTTPRefreshProcessor
 
 class FormNotFoundError(Exception): ...
 
