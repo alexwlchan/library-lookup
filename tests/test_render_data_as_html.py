@@ -1,6 +1,6 @@
 import pytest
 
-from render_data_as_html import display_author_name
+from library_lookup.render_data_as_html import display_author_name
 
 
 @pytest.mark.parametrize(
