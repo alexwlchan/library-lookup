@@ -118,7 +118,7 @@ soupsieve==2.5
     # via
     #   -r requirements.txt
     #   beautifulsoup4
-tenacity==8.5.0
+tenacity==9.0.0
     # via -r requirements.txt
 titlecase==2.3
     # via -r requirements.txt
