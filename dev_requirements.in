@@ -1,5 +1,6 @@
 -r requirements.txt
 
+interrogate
 mypy
 ruff
 pytest

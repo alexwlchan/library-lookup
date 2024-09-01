@@ -27,7 +27,7 @@ jobs:
       - name: "Install dependencies"
         run: python3 -m pip install -r dev_requirements.txt
 
-      - name: Run linting
+      - name: Check formatting
         run: |
           ruff check .
           ruff format --check .
