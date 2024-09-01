@@ -43,6 +43,13 @@ def parse_availability_info(soup: bs4.BeautifulSoup) -> list[AvailabilityInfo]:
             {key: elem.text if elem else "" for key, elem in elements.items()},
         )
 
+        if "(Hertfordshire County Council)" not in info["location"]:
+            continue
+
+        info["location"] = info["location"].replace(
+            " (Hertfordshire County Council)", ""
+        )
+
         availability.append(info)
 
     return availability
