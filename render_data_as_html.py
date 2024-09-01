@@ -23,6 +23,15 @@ def rgba(hs: str, opacity: float) -> str:
 if __name__ == "__main__":
     book_data = json.load(open("books.json"))
 
+    for book in book_data["books"]:
+        for av in list(book["availability"]):
+            if av["location"].endswith(" (Hertfordshire Libraries)"):
+                av["location"] = av["location"].replace(
+                    " (Hertfordshire Libraries)", ""
+                )
+            else:
+                book["availability"].remove(av)
+
     # Group books by (title, author) pairs.  This ensures that copies
     # of the same book in different formats (e.g. paperback, hardback)
     # will be collapsed into a single entry.
