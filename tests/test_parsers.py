@@ -31,6 +31,12 @@ class TestParseAvailabilityInfo:
                 "status": "Available",
                 "call_number": "Science fiction paperback",
             },
+            {
+                "location": "Woodhall Library",
+                "collection": "Adult Fiction: Science Fiction / Fantasy Fiction",
+                "status": "Available",
+                "call_number": "",
+            },
         ]
 
 
