@@ -96,7 +96,7 @@ py==1.11.0
     # via interrogate
 pycparser==2.22
     # via cffi
-pytest==8.3.2
+pytest==8.3.3
     # via
     #   -r dev_requirements.in
     #   pytest-cov
