@@ -85,7 +85,7 @@
           {{ generated_at.strftime('%a %-d %B at %H:%M:%S') }}
         </time>
         /
-        Tracking {{ books|length }} books
+        Tracking {{ books|length }} book{% if books|length > 1 %}s{% endif %}
       </p>
     </aside>
 
