@@ -16,7 +16,7 @@ from tenacity import retry, stop_after_attempt, wait_exponential
 import tqdm
 
 from library_lookup import get_required_password
-from library_lookup.downloaders import download_cover_image
+from library_lookup.downloaders import download_cover_image, SavedImage
 from library_lookup.parsers import (
     AvailabilityInfo,
     RecordDetails,
@@ -25,11 +25,6 @@ from library_lookup.parsers import (
     parse_availability_info,
     parse_record_details,
 )
-
-
-class SavedImage(typing.TypedDict):
-    url: str
-    path: str | None
 
 
 def save_image_locally(img_element: bs4.Tag) -> SavedImage:
@@ -59,7 +54,7 @@ class DefaultList(typing.TypedDict):
 class FieldsetInfo(typing.TypedDict):
     title: str
     record_details: RecordDetails
-    image: str | None
+    image: SavedImage
     author: str | None
     publication_year: str | None
     availability: list[AvailabilityInfo]
