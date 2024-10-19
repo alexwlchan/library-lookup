@@ -11,62 +11,29 @@ from urllib.error import HTTPError, URLError
 
 import bs4
 import certifi
-import httpx
-import hyperlink
 import mechanize
 from tenacity import retry, stop_after_attempt, wait_exponential
 import tqdm
 
 from library_lookup import get_required_password
+from library_lookup.downloaders import download_cover_image, SavedImage
 from library_lookup.parsers import (
     AvailabilityInfo,
     RecordDetails,
+    get_cover_image_url,
     get_url_of_next_page,
     parse_availability_info,
     parse_record_details,
 )
 
 
-def save_image_locally(img_element: bs4.Tag) -> str | None:
+def save_image_locally(img_element: bs4.Tag) -> SavedImage:
     """
     Downloads a local copy of an image, and returns the path.
     """
-    image_url = img_element.attrs["longdesc"]
-    url = hyperlink.URL.from_text(image_url)
+    image_url = get_cover_image_url(img_element)
 
-    # We're going to save it to the 'covers' directory, which is gitignore'd.
-    # We don't know if the image is a PNG or a JPEG yet, so look for
-    # a file with a matching ISBN in the directory -- that's what we want.
-    os.makedirs("covers", exist_ok=True)
-
-    try:
-        isbn = url.get("ISBN")[0]
-        assert isinstance(isbn, str)
-
-        existing_image = next(p for p in os.listdir("covers") if p.startswith(isbn))
-        return os.path.join("covers", existing_image)
-    except (IndexError, StopIteration):
-        pass
-
-    # By default the library website returns a small image, but we can futz
-    # with the query parameters to get a large image.
-    url = url.set("SIZE", "l")  # SIZE=s => small, SIZE=l => large
-    image_resp = httpx.get(str(url), follow_redirects=True)
-
-    # Note: we assume the URl will be something like
-    #
-    #     http://www.bibdsl.co.uk/bds-images/l/123456/1234567890.jpg
-    #
-    # and use the final part as a basis for the filename.
-    out_path = os.path.join("covers", os.path.basename(image_resp.url.path))
-
-    if os.path.basename(image_resp.url.path) == "blank.gif":
-        return None
-
-    with open(out_path, "wb") as out_file:
-        out_file.write(image_resp.content)
-
-    return out_path
+    return download_cover_image(image_url)
 
 
 def is_retryable(exc: Exception) -> bool:
@@ -87,7 +54,7 @@ class DefaultList(typing.TypedDict):
 class FieldsetInfo(typing.TypedDict):
     title: str
     record_details: RecordDetails
-    image: str | None
+    image: SavedImage
     author: str | None
     publication_year: str | None
     availability: list[AvailabilityInfo]
@@ -237,6 +204,7 @@ class LibraryBrowser:
                 except Exception:
                     print(f"Unable to get info from {fieldset!r}", file=sys.stderr)
                     raise
+                break
 
     def parse_fieldset_info(self, fieldset: bs4.Tag) -> FieldsetInfo:
         """
@@ -358,9 +326,11 @@ if __name__ == "__main__":
 
     default_list = browser.get_default_list()
 
+    import itertools
+
     books = list(
         tqdm.tqdm(
-            browser.get_books_in_list(url=default_list["url"]),
+            itertools.islice(browser.get_books_in_list(url=default_list["url"]), 1),
             total=default_list["count"],
         )
     )

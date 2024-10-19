@@ -3,6 +3,7 @@ import os
 import bs4
 
 from library_lookup.parsers import (
+    get_cover_image_url,
     get_url_of_next_page,
     parse_availability_info,
     parse_record_details,
@@ -91,3 +92,24 @@ class TestGetUrlOfNextPage:
         )
 
         assert get_url_of_next_page(soup) is None
+
+
+def test_get_cover_image_url() -> None:
+    soup = bs4.BeautifulSoup(
+        """
+        <img
+            alt="Thumbnail for Adulthood rites"
+            class="imgsc img-fluid d-block mx-auto" data-deficon=""
+    longdesc="https://www.bibdsl.co.uk/xmla/image-service.asp?ISBN=9781472281074&amp;SIZE=s&amp;DBM=1ipoizw9i9eqiwirork2o1o4j12nreflvemxskafsqa&amp;ERR=blank.gif&amp;SSL=true**"
+            src="/docs/WPAC/images/loading.png"
+            title="Adulthood rites"/>
+        """,
+        "html.parser",
+    )
+    img_elem = soup.find("img")
+    assert isinstance(img_elem, bs4.Tag)
+
+    assert (
+        get_cover_image_url(img_elem)
+        == "https://www.bibdsl.co.uk/xmla/image-service.asp?ISBN=9781472281074&SIZE=l&DBM=1ipoizw9i9eqiwirork2o1o4j12nreflvemxskafsqa&ERR=blank.gif&SSL=true%2A%2A"
+    )

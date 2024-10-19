@@ -85,7 +85,7 @@
           {{ generated_at.strftime('%a %-d %B at %H:%M:%S') }}
         </time>
         /
-        Tracking {{ books|length }} books
+        Tracking {{ books|length }} book{% if books|length > 1 %}s{% endif %}
       </p>
     </aside>
 
@@ -95,7 +95,7 @@
         <div class="book" data-book-brn="{{ book.record_details.BRN }}" data-book-title="{{ book.title }}">
           <div class="book_cover">
             {% if book.image != None %}
-              <img src="{{ book.image }}" style="aspect-ratio: {{ book.image_width }} / {{ book.image_height }}" loading="lazy">
+              <img src="{{ book.image.path }}" style="aspect-ratio: {{ book.image_width }} / {{ book.image_height }}" loading="lazy">
             {% endif %}
           </div>
           <div class="book_metadata">

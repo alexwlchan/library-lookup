@@ -1,7 +1,7 @@
 import keyring
 
 
-def get_required_password(service_name: str, username: str) -> str:
+def get_required_password(service_name: str, username: str) -> str:  # pragma: no cover
     """
     Retrieve a password from the keychain, or throw if it's missing.
     """
