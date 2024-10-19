@@ -2,6 +2,7 @@ import re
 import typing
 
 import bs4
+import hyperlink
 
 
 class AvailabilityInfo(typing.TypedDict):
@@ -151,3 +152,28 @@ def get_url_of_next_page(soup: bs4.BeautifulSoup) -> str | None:
 
     assert isinstance(anchor_elem, bs4.Tag)
     return anchor_elem.attrs["href"]
+
+
+def get_cover_image_url(img_elem: bs4.Tag) -> str:
+    """
+    Given an <img> element from a <fieldset> on the list of books, return the
+    URL of the high-resolution cover image.
+
+    The <img> element will be of the form:
+
+        <img
+            alt="Thumbnail for Adulthood rites"
+            class="imgsc img-fluid d-block mx-auto" data-deficon=""
+    longdesc="https://www.bibdsl.co.uk/xmla/image-service.asp?ISBN=9781472281074&amp;SIZE=s&amp;DBM=1ipoizw9i9eqiwirork2o1o4j12nreflvemxskafsqa&amp;ERR=blank.gif&amp;SSL=true**"
+            src="/docs/WPAC/images/loading.png"
+            title="Adulthood rites"/>
+
+    """
+    image_url = img_elem.attrs["longdesc"]
+    url = hyperlink.parse(image_url)
+
+    # By default the library website returns a small image, but we can futz
+    # with the query parameters to get a large image.
+    url = url.set("SIZE", "l")  # SIZE=s => small, SIZE=l => large
+
+    return str(url)
