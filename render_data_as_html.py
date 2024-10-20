@@ -39,24 +39,24 @@ if __name__ == "__main__":
     books_by_title = collections.defaultdict(list)
     grouped_books = []
 
-    for book in book_data["books"]:
-        key = (book["title"], book["author"])
-        books_by_title[key].append(book)
+    # for book in book_data["books"]:
+    #     key = (book["title"], book["author"])
+    #     books_by_title[key].append(book)
+    #
+    # for _, these_books in books_by_title.items():
+    #     if len(these_books) == 1:
+    #         grouped_books.append(these_books[0])
+    #     else:
+    #         these_books = sorted(these_books, key=lambda b: b.get("year", "0"))
+    #
+    #         this_book = these_books[0]
+    #
+    #         for book in these_books[1:]:
+    #             this_book["availability"].extend(book["availability"])
+    #
+    #         grouped_books.append(this_book)
 
-    for _, these_books in books_by_title.items():
-        if len(these_books) == 1:
-            grouped_books.append(these_books[0])
-        else:
-            these_books = sorted(these_books, key=lambda b: b.get("year", "0"))
-
-            this_book = these_books[0]
-
-            for book in these_books[1:]:
-                this_book["availability"].extend(book["availability"])
-
-            grouped_books.append(this_book)
-
-    book_data["books"] = grouped_books
+    # book_data["books"] = grouped_books
 
     # Get a tally of all the branches in the Hertfordshire network
     branches = set()
@@ -82,8 +82,8 @@ if __name__ == "__main__":
 
     for b in book_data["books"]:
         if b["image"]:
-            if b["image"]["path"] is None:
-                b["image"] = download_cover_image(image_url=b["image"]["url"])
+            # if b["image"]["path"] is None:
+            #     b["image"] = download_cover_image(image_url=b["image"]["url"])
 
             if b["image"]["path"] is not None:
                 b["tint_color"] = choose_tint_color_for_file(path=b["image"]["path"])
@@ -99,6 +99,9 @@ if __name__ == "__main__":
             b["format"] = "hardback"
         else:
             b["format"] = None
+
+    # with open('book_data.json', 'x') as of:
+    #     of.write(json.dumps(book_data, indent=2, sort_keys=True))
 
     with open("_html/index.html", "w") as outfile:
         outfile.write(

@@ -94,7 +94,7 @@
         {% for book in books %}
         <div class="book" data-book-brn="{{ book.record_details.BRN }}" data-book-title="{{ book.title }}">
           <div class="book_cover">
-            {% if book.image != None %}
+            {% if book.image.path != None %}
               <img src="{{ book.image.path }}" style="aspect-ratio: {{ book.image_width }} / {{ book.image_height }}" loading="lazy">
             {% endif %}
           </div>
@@ -102,6 +102,9 @@
             <h3>
               <a href="{{ book.record_details['Bookmark link'] }}">{{ book.title.replace(' : ', ': ') | titlecase }}</a>{% if book.author %},
               by {{ book.author | author_name }}
+              {%- endif -%}
+              {%- if book.format -%}
+                , {{ book.format }}
               {% endif %}
               {% if book.publication_year %}
                 ({{ book.publication_year }})
