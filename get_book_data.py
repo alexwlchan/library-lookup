@@ -326,11 +326,9 @@ if __name__ == "__main__":
 
     default_list = browser.get_default_list()
 
-    import itertools
-
     books = list(
         tqdm.tqdm(
-            itertools.islice(browser.get_books_in_list(url=default_list["url"]), 1),
+            browser.get_books_in_list(url=default_list["url"]),
             total=default_list["count"],
         )
     )
