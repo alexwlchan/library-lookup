@@ -88,10 +88,10 @@ if __name__ == "__main__":
             if b["image"]["path"] is not None:
                 b["tint_color"] = choose_tint_color_for_file(path=b["image"]["path"])
 
-            im = Image.open(b["image"]["path"])
+                im = Image.open(b["image"]["path"])
 
-            b["image_width"] = im.width
-            b["image_height"] = im.height
+                b["image_width"] = im.width
+                b["image_height"] = im.height
 
         if "pbk" in b["record_details"].get("ISBN", ""):
             b["format"] = "paperback"
