@@ -12,8 +12,9 @@ def display_author_name(label: str) -> str:
     #
     #     Kawaguchi, Toshikazu, 1971-
     #     Le Guin, Ursula K., 1929-2018
+    #     Kay, Laura, 1989
     #
-    label = re.sub(r", [0-9]{4}\-(?:[0-9]{4})?$", "", label)
+    label = re.sub(r", [0-9]{4}\-?(?:[0-9]{4})?$", "", label)
 
     try:
         last_name, first_name = label.split(",")
