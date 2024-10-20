@@ -195,7 +195,6 @@ class LibraryBrowser:
                 except Exception:
                     print(f"Unable to get info from {fieldset!r}", file=sys.stderr)
                     raise
-                break
 
     def parse_fieldset_info(self, fieldset: bs4.Tag) -> FieldsetInfo:
         """
@@ -214,7 +213,7 @@ class LibraryBrowser:
 
         img_elem = fieldset.find("img")
         assert isinstance(img_elem, bs4.Tag)
-        
+
         image_url = get_cover_image_url(img_elem)
         image = download_cover_image(image_url)
 
