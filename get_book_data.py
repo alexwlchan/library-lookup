@@ -27,15 +27,6 @@ from library_lookup.parsers import (
 )
 
 
-def save_image_locally(img_element: bs4.Tag) -> SavedImage:
-    """
-    Downloads a local copy of an image, and returns the path.
-    """
-    image_url = get_cover_image_url(img_element)
-
-    return download_cover_image(image_url)
-
-
 def is_retryable(exc: Exception) -> bool:
     if isinstance(exc, URLError):
         return True
@@ -223,7 +214,9 @@ class LibraryBrowser:
 
         img_elem = fieldset.find("img")
         assert isinstance(img_elem, bs4.Tag)
-        image = save_image_locally(img_elem)
+        
+        image_url = get_cover_image_url(img_elem)
+        image = download_cover_image(image_url)
 
         # The author and publication year are in a block like so:
         #
