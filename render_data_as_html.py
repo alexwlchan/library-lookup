@@ -11,7 +11,6 @@ from jinja2 import Environment, FileSystemLoader, select_autoescape
 from PIL import Image
 import titlecase
 
-from library_lookup.downloaders import download_cover_image
 from library_lookup.render_data_as_html import display_author_name
 from tint_colors import choose_tint_color_for_file, from_hex
 
@@ -82,9 +81,6 @@ if __name__ == "__main__":
 
     for b in book_data["books"]:
         if b["image"]:
-            # if b["image"]["path"] is None:
-            #     b["image"] = download_cover_image(image_url=b["image"]["url"])
-
             if b["image"]["path"] is not None:
                 b["tint_color"] = choose_tint_color_for_file(path=b["image"]["path"])
 
