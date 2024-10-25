@@ -32,31 +32,6 @@ if __name__ == "__main__":
             else:
                 book["availability"].remove(av)
 
-    # Group books by (title, author) pairs.  This ensures that copies
-    # of the same book in different formats (e.g. paperback, hardback)
-    # will be collapsed into a single entry.
-    books_by_title = collections.defaultdict(list)
-    grouped_books = []
-
-    # for book in book_data["books"]:
-    #     key = (book["title"], book["author"])
-    #     books_by_title[key].append(book)
-    #
-    # for _, these_books in books_by_title.items():
-    #     if len(these_books) == 1:
-    #         grouped_books.append(these_books[0])
-    #     else:
-    #         these_books = sorted(these_books, key=lambda b: b.get("year", "0"))
-    #
-    #         this_book = these_books[0]
-    #
-    #         for book in these_books[1:]:
-    #             this_book["availability"].extend(book["availability"])
-    #
-    #         grouped_books.append(this_book)
-
-    # book_data["books"] = grouped_books
-
     # Get a tally of all the branches in the Hertfordshire network
     branches = set()
     for book in book_data["books"]:
