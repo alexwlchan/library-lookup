@@ -23,7 +23,7 @@ click==8.1.7
     # via interrogate
 colorama==0.4.6
     # via interrogate
-coverage[toml]==7.4.0
+coverage[toml]==7.6.4
     # via pytest-cov
 cryptography==43.0.1
     # via
@@ -107,7 +107,7 @@ pytest==8.3.3
     # via
     #   -r dev_requirements.in
     #   pytest-cov
-pytest-cov==5.0.0
+pytest-cov==6.0.0
     # via -r dev_requirements.in
 ruff==0.7.1
     # via -r dev_requirements.in
