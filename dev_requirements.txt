@@ -134,7 +134,7 @@ tenacity==9.0.0
     # via -r requirements.txt
 titlecase==2.3
     # via -r requirements.txt
-tqdm==4.66.6
+tqdm==4.67.0
     # via -r requirements.txt
 types-beautifulsoup4==4.12.0.20241020
     # via -r dev_requirements.in
