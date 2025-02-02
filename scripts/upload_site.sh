@@ -18,5 +18,5 @@ rsync \
   --include="" \
   --filter="" \
   "_html/" \
-  "alexwlchan@alexwlchan.net:repos/library-lookup/_html/" \
+  "alexwlchan@alexwlchan.net:repos/alexwlchan.net/_site/my-tools/library-lookup/" \
   "$@"
