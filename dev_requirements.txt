@@ -8,19 +8,27 @@ anyio==4.1.0
     #   httpx
 attrs==24.2.0
     # via interrogate
-beautifulsoup4==4.12.3
+beautifulsoup4==4.13.0
     # via -r requirements.txt
 certifi==2023.11.17
     # via
     #   -r requirements.txt
     #   httpcore
     #   httpx
+cffi==1.17.1
+    # via
+    #   -r requirements.txt
+    #   cryptography
 click==8.1.7
     # via interrogate
 colorama==0.4.6
     # via interrogate
-coverage==7.6.4
+coverage[toml]==7.6.4
     # via pytest-cov
+cryptography==44.0.0
+    # via
+    #   -r requirements.txt
+    #   secretstorage
 h11==0.14.0
     # via
     #   -r requirements.txt
@@ -59,6 +67,11 @@ jaraco-functools==4.0.1
     # via
     #   -r requirements.txt
     #   keyring
+jeepney==0.8.0
+    # via
+    #   -r requirements.txt
+    #   keyring
+    #   secretstorage
 jinja2==3.1.5
     # via -r requirements.txt
 keyring==25.6.0
@@ -86,6 +99,10 @@ pluggy==1.5.0
     # via pytest
 py==1.11.0
     # via interrogate
+pycparser==2.22
+    # via
+    #   -r requirements.txt
+    #   cffi
 pytest==8.3.4
     # via
     #   -r dev_requirements.in
@@ -94,6 +111,10 @@ pytest-cov==6.0.0
     # via -r dev_requirements.in
 ruff==0.9.4
     # via -r dev_requirements.in
+secretstorage==3.3.3
+    # via
+    #   -r requirements.txt
+    #   keyring
 six==1.16.0
     # via
     #   -r requirements.txt
@@ -122,8 +143,11 @@ types-requests==2.32.0.20241016
     # via types-tqdm
 types-tqdm==4.67.0.20241221
     # via -r dev_requirements.in
-typing-extensions==4.11.0
-    # via mypy
+typing-extensions==4.12.2
+    # via
+    #   -r requirements.txt
+    #   beautifulsoup4
+    #   mypy
 urllib3==2.2.3
     # via types-requests
 webencodings==0.5.1
