@@ -135,7 +135,7 @@ titlecase==2.3
     # via -r requirements.txt
 tqdm==4.67.1
     # via -r requirements.txt
-types-beautifulsoup4==4.12.0.20241020
+types-beautifulsoup4==4.12.0.20250204
     # via -r dev_requirements.in
 types-html5lib==1.1.11.20240228
     # via types-beautifulsoup4
