@@ -141,7 +141,7 @@ types-html5lib==1.1.11.20240228
     # via types-beautifulsoup4
 types-requests==2.32.0.20241016
     # via types-tqdm
-types-tqdm==4.67.0.20241221
+types-tqdm==4.67.0.20250228
     # via -r dev_requirements.in
 typing-extensions==4.12.2
     # via
