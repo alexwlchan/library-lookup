@@ -103,7 +103,7 @@ pycparser==2.22
     # via
     #   -r requirements.txt
     #   cffi
-pytest==8.3.4
+pytest==8.3.5
     # via
     #   -r dev_requirements.in
     #   pytest-cov
