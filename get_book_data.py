@@ -7,7 +7,7 @@ import json
 import os
 import sys
 import typing
-from urllib.error import HTTPError, URLError
+
 
 import bs4
 import certifi
@@ -25,16 +25,6 @@ from library_lookup.parsers import (
     parse_availability_info,
     parse_record_details,
 )
-
-
-def is_retryable(exc: Exception) -> bool:
-    if isinstance(exc, URLError):
-        return True
-
-    if isinstance(exc, HTTPError) and exc.code >= 500:
-        return True
-
-    return False
 
 
 class DefaultList(typing.TypedDict):
@@ -106,7 +96,6 @@ class LibraryBrowser:
 
     @retry(
         stop=stop_after_attempt(5),
-        retry=is_retryable,  # type: ignore
         wait=wait_exponential(multiplier=1, min=1, max=15),
     )
     def _get_soup(self, url: str) -> bs4.BeautifulSoup:
