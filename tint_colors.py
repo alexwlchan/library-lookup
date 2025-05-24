@@ -32,7 +32,7 @@ def choose_tint_color_for_file(path: str) -> str:
         "--best-against-bg=#ffffff",
     ]
 
-    hex_str = subprocess.check_output(cmd).decode("utf8").strip()
+    hex_str = subprocess.check_output(cmd, text=True).strip()
 
     cached_colors[path] = hex_str
 
