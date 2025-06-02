@@ -100,12 +100,14 @@ more-itertools==10.1.0
     #   -r requirements.txt
     #   jaraco-classes
     #   jaraco-functools
-mypy==1.15.0
+mypy==1.16.0
     # via -r dev_requirements.in
 mypy-extensions==1.0.0
     # via mypy
 packaging==23.2
     # via pytest
+pathspec==0.12.1
+    # via mypy
 pillow==11.2.1
     # via -r requirements.txt
 pluggy==1.5.0
