@@ -126,7 +126,7 @@ pytest==8.4.0
     #   pytest-cov
 pytest-cov==6.1.1
     # via -r dev_requirements.in
-ruff==0.11.12
+ruff==0.11.13
     # via -r dev_requirements.in
 secretstorage==3.3.3
     # via
