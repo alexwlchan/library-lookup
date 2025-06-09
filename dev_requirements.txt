@@ -118,7 +118,9 @@ pycparser==2.22
     # via
     #   -r requirements.txt
     #   cffi
-pytest==8.3.5
+pygments==2.19.1
+    # via pytest
+pytest==8.4.0
     # via
     #   -r dev_requirements.in
     #   pytest-cov
