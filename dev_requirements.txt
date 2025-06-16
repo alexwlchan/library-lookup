@@ -111,7 +111,9 @@ pathspec==0.12.1
 pillow==11.2.1
     # via -r requirements.txt
 pluggy==1.5.0
-    # via pytest
+    # via
+    #   pytest
+    #   pytest-cov
 py==1.11.0
     # via interrogate
 pycparser==2.22
@@ -124,7 +126,7 @@ pytest==8.4.0
     # via
     #   -r dev_requirements.in
     #   pytest-cov
-pytest-cov==6.1.1
+pytest-cov==6.2.1
     # via -r dev_requirements.in
 ruff==0.11.13
     # via -r dev_requirements.in
