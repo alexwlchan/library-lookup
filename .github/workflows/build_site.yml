@@ -12,81 +12,50 @@ on:
       - 'dev_requirements.txt'
       - 'tests/**'
 
-  # rebuild once a day at 7:30 UTC
   schedule:
     - cron: "30 7 * * *"
 
 jobs:
   build:
     name: Build the website
-    runs-on: ubuntu-latest
+    runs-on: self-hosted
     steps:
       - name: "Check out the repo"
         uses: actions/checkout@v4
 
-      - name: "Cache book data"
-        uses: "actions/cache@v4"
-        with:
-          path: books.json
-          key: "books-${{ github.sha }}"
-          restore-keys: "books-"
-
-      - name: "Cache cover images"
-        uses: "actions/cache@v4"
-        with:
-          path: covers
-          key: "covers-${{ github.sha }}"
-          restore-keys: "covers-"
-
-      - name: "Install dominant_colours"
+      - name: "Install Python dependencies"
         run: |
-          curl -L -O 'https://github.com/alexwlchan/dominant_colours/releases/download/v1.2.0/dominant_colours-x86_64-unknown-linux-gnu.tar.gz'
-          tar -xzf dominant_colours-x86_64-unknown-linux-gnu.tar.gz
-          chmod +x dominant_colours
-          mv dominant_colours /usr/local/bin/dominant_colours
+          python3 -m venv .venv
+          source .venv/bin/activate
 
-      - name: "Check it works"
-        run: dominant_colours screenshot.png
-
-      - name: Set up Python
-        uses: actions/setup-python@v5
-        with:
-          python-version: "3.13"
-          cache: pip
-
-      - name: "Install dependencies"
-        run: |
           python3 -m pip install -e .
           python3 -m pip install -r requirements.txt
 
       - name: "Get the book data"
         if: github.ref == 'refs/heads/main'
-        run: python3 get_book_data.py
+        run: |
+          source .venv/bin/activate
+          python3 get_book_data.py
         env:
           LIBRARY_CARD_NUMBER: ${{ secrets.LIBRARY_CARD_NUMBER }}
           LIBRARY_CARD_PASSWORD: ${{ secrets.LIBRARY_CARD_PASSWORD }}
 
       - name: "Render the data as HTML"
-        run: python3 render_data_as_html.py
-
-      - name: Deploy to Linode
-        if: github.ref == 'refs/heads/main'
-        env:
-          DEPLOY_KEY: ${{ secrets.DEPLOY_KEY }}
         run: |
-          # Get the SSH host keys for my web server
-          mkdir -p ~/.ssh
-          ssh-keyscan -H "alexwlchan.net" >> ~/.ssh/known_hosts
+          source .venv/bin/activate
+          python3 render_data_as_html.py
 
-          # Save the deploy key to a file, so it can be used by
-          # the SSH process
-          echo "$DEPLOY_KEY" > id_rsa
-          chmod 600 id_rsa
-
-          # Run the rsync command to upload the _site folder to
-          # my web server
-          bash scripts/upload_site.sh \
-            --rsh="ssh -i id_rsa -o IdentityAgent=none -o HostKeyAlgorithms=ssh-ed25519"
-
-          # Clean up the SSH key
-          rm id_rsa
+      - name: Copy to the public directory
+        if: github.ref == 'refs/heads/main'
+        run: |
+          rsync \
+            --compress \
+            --recursive \
+            --delete \
+            --verbose \
+            --checksum \
+            --exclude="" \
+            --include="" \
+            --filter="" \
+            _html/ \
+            ~/repos/alexwlchan.net/_site/my-tools/library-lookup/
