@@ -126,7 +126,7 @@ pytest==8.4.1
     # via
     #   -r dev_requirements.in
     #   pytest-cov
-pytest-cov==6.2.1
+pytest-cov==6.3.0
     # via -r dev_requirements.in
 ruff==0.12.10
     # via -r dev_requirements.in
