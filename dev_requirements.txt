@@ -100,7 +100,7 @@ more-itertools==10.1.0
     #   -r requirements.txt
     #   jaraco-classes
     #   jaraco-functools
-mypy==1.17.1
+mypy==1.18.1
     # via -r dev_requirements.in
 mypy-extensions==1.0.0
     # via mypy
