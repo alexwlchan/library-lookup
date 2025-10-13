@@ -251,7 +251,7 @@ class LibraryBrowser:
         #
         # That's the URL we need to open to get availability info.
         availability_elem = fieldset.find("div", attrs={"class": "availability"})
-        
+
         if availability_elem is None:
             availability = []
         else:
