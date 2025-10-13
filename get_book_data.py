@@ -251,15 +251,19 @@ class LibraryBrowser:
         #
         # That's the URL we need to open to get availability info.
         availability_elem = fieldset.find("div", attrs={"class": "availability"})
-        assert isinstance(availability_elem, bs4.Tag)
+        
+        if availability_elem is None:
+            availability = []
+        else:
+            assert isinstance(availability_elem, bs4.Tag), availability_elem
 
-        availability_link_elem = availability_elem.find("a")
-        assert isinstance(availability_link_elem, bs4.Tag)
-        availability_url = availability_link_elem.attrs["href"]
+            availability_link_elem = availability_elem.find("a")
+            assert isinstance(availability_link_elem, bs4.Tag)
+            availability_url = availability_link_elem.attrs["href"]
 
-        soup = self._get_soup(availability_url)
+            soup = self._get_soup(availability_url)
 
-        availability = parse_availability_info(soup)
+            availability = parse_availability_info(soup)
 
         return {
             "title": title,
