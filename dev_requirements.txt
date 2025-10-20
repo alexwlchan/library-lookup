@@ -8,10 +8,6 @@ anyio==4.1.0
     #   httpx
 attrs==24.2.0
     # via interrogate
-backports-tarfile==1.2.0
-    # via
-    #   -r requirements.txt
-    #   jaraco-context
 beautifulsoup4==4.14.2
     # via -r requirements.txt
 certifi==2023.11.17
@@ -33,11 +29,6 @@ cryptography==44.0.0
     # via
     #   -r requirements.txt
     #   secretstorage
-exceptiongroup==1.2.2
-    # via
-    #   -r requirements.txt
-    #   anyio
-    #   pytest
 h11==0.14.0
     # via
     #   -r requirements.txt
@@ -60,10 +51,6 @@ idna==3.4
     #   anyio
     #   httpx
     #   hyperlink
-importlib-metadata==8.6.1
-    # via
-    #   -r requirements.txt
-    #   keyring
 iniconfig==2.0.0
     # via pytest
 interrogate==1.7.0
@@ -108,7 +95,7 @@ packaging==23.2
     # via pytest
 pathspec==0.12.1
     # via mypy
-pillow==11.3.0
+pillow==12.0.0
     # via -r requirements.txt
 pluggy==1.5.0
     # via
@@ -152,12 +139,6 @@ tenacity==9.1.2
     # via -r requirements.txt
 titlecase==2.3
     # via -r requirements.txt
-tomli==2.2.1
-    # via
-    #   coverage
-    #   interrogate
-    #   mypy
-    #   pytest
 tqdm==4.67.1
     # via -r requirements.txt
 types-beautifulsoup4==4.12.0.20250516
@@ -179,7 +160,3 @@ webencodings==0.5.1
     # via
     #   -r requirements.txt
     #   html5lib
-zipp==3.21.0
-    # via
-    #   -r requirements.txt
-    #   importlib-metadata
