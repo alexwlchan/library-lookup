@@ -4,8 +4,6 @@
     # via -r requirements.in
 anyio==4.1.0
     # via httpx
-backports-tarfile==1.2.0
-    # via jaraco-context
 beautifulsoup4==4.14.2
     # via -r requirements.in
 certifi==2023.11.17
@@ -16,8 +14,6 @@ cffi==1.17.1
     # via cryptography
 cryptography==44.0.0
     # via secretstorage
-exceptiongroup==1.2.2
-    # via anyio
 h11==0.14.0
     # via httpcore
 html5lib==1.1
@@ -33,8 +29,6 @@ idna==3.4
     #   anyio
     #   httpx
     #   hyperlink
-importlib-metadata==8.6.1
-    # via keyring
 jaraco-classes==3.3.0
     # via keyring
 jaraco-context==5.3.0
@@ -57,7 +51,7 @@ more-itertools==10.1.0
     # via
     #   jaraco-classes
     #   jaraco-functools
-pillow==11.3.0
+pillow==12.0.0
     # via -r requirements.in
 pycparser==2.22
     # via cffi
@@ -79,5 +73,3 @@ typing-extensions==4.12.2
     # via beautifulsoup4
 webencodings==0.5.1
     # via html5lib
-zipp==3.21.0
-    # via importlib-metadata
