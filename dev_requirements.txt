@@ -109,7 +109,7 @@ pycparser==2.22
     #   cffi
 pygments==2.19.1
     # via pytest
-pytest==8.4.2
+pytest==9.0.0
     # via
     #   -r dev_requirements.in
     #   pytest-cov
