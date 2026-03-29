@@ -1,7 +1,7 @@
 -e file:.
 
 beautifulsoup4
-httpx
+certifi
 hyperlink
 Jinja2
 keyring

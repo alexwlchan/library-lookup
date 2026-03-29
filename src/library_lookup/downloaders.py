@@ -1,7 +1,9 @@
 import os
+import ssl
 import typing
+import urllib.request
 
-import httpx
+import certifi
 import hyperlink
 
 
@@ -28,19 +30,27 @@ def download_cover_image(image_url: str) -> SavedImage:
     except (IndexError, StopIteration):
         pass
 
-    image_resp = httpx.get(image_url, follow_redirects=True)
+    ssl_context = ssl.create_default_context(cafile=certifi.where())
+
+    req = urllib.request.Request(image_url)
+    req.add_header("User-Agent", "alexwlchan <alex@alexwlchan.net>")
+
+    with urllib.request.urlopen(req, context=ssl_context) as resp:
+        filename = hyperlink.parse(resp.geturl()).path[-1]
+        image_data = resp.read()
+        resp.close()
+
+    if filename == "blank.gif":
+        return {"url": image_url, "path": None}
 
     # Note: we assume the URl will be something like
     #
     #     http://www.bibdsl.co.uk/bds-images/l/123456/1234567890.jpg
     #
     # and use the final part as a basis for the filename.
-    out_path = os.path.join("covers", os.path.basename(image_resp.url.path))
-
-    if os.path.basename(image_resp.url.path) == "blank.gif":
-        return {"url": image_url, "path": None}
+    out_path = os.path.join("covers", filename)
 
     with open(out_path, "wb") as out_file:
-        out_file.write(image_resp.content)
+        out_file.write(image_data)
 
     return {"url": image_url, "path": out_path}
