@@ -8,12 +8,20 @@ beautifulsoup4==4.14.3
     # via -r requirements.txt
 certifi==2026.2.25
     # via -r requirements.txt
+cffi==2.0.0
+    # via
+    #   -r requirements.txt
+    #   cryptography
 click==8.3.1
     # via interrogate
 colorama==0.4.6
     # via interrogate
-coverage==7.13.5
+coverage[toml]==7.13.5
     # via pytest-cov
+cryptography==46.0.6
+    # via
+    #   -r requirements.txt
+    #   secretstorage
 html5lib==1.1
     # via
     #   -r requirements.txt
@@ -40,6 +48,11 @@ jaraco-functools==4.4.0
     # via
     #   -r requirements.txt
     #   keyring
+jeepney==0.9.0
+    # via
+    #   -r requirements.txt
+    #   keyring
+    #   secretstorage
 jinja2==3.1.6
     # via -r requirements.txt
 keyring==25.7.0
@@ -65,7 +78,7 @@ packaging==26.0
     # via pytest
 pathspec==1.0.4
     # via mypy
-pillow==12.1.1
+pillow==12.2.0
     # via -r requirements.txt
 pluggy==1.6.0
     # via
@@ -73,6 +86,10 @@ pluggy==1.6.0
     #   pytest-cov
 py==1.11.0
     # via interrogate
+pycparser==3.0
+    # via
+    #   -r requirements.txt
+    #   cffi
 pygments==2.20.0
     # via pytest
 pytest==9.0.2
@@ -83,6 +100,10 @@ pytest-cov==7.1.0
     # via -r dev_requirements.in
 ruff==0.15.8
     # via -r dev_requirements.in
+secretstorage==3.5.0
+    # via
+    #   -r requirements.txt
+    #   keyring
 six==1.17.0
     # via
     #   -r requirements.txt
@@ -95,7 +116,7 @@ tabulate==0.10.0
     # via interrogate
 tenacity==9.1.4
     # via -r requirements.txt
-titlecase==2.4.1
+titlecase==2.3
     # via -r requirements.txt
 tqdm==4.67.3
     # via -r requirements.txt
