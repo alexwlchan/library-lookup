@@ -2,7 +2,6 @@
 
 beautifulsoup4
 certifi
-hyperlink
 Jinja2
 keyring
 mechanize

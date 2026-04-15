@@ -1,8 +1,8 @@
 import re
 from typing import cast, TypeAlias, TypedDict
+import urllib.parse
 
 import bs4
-import hyperlink
 
 
 class AvailabilityInfo(TypedDict):
@@ -171,10 +171,20 @@ def get_cover_image_url(img_elem: bs4.Tag) -> str:
     """
     image_url = img_elem.attrs["longdesc"]
 
-    url = hyperlink.parse(image_url)
+    url = urllib.parse.urlsplit(image_url)
+
+    query = urllib.parse.parse_qs(url.query)
 
     # By default the library website returns a small image, but we can futz
     # with the query parameters to get a large image.
-    url = url.set("SIZE", "l")  # SIZE=s => small, SIZE=l => large
+    query["SIZE"] = ["l"]  # SIZE=s => small, SIZE=l => large
 
-    return str(url)
+    return urllib.parse.urlunsplit(
+        (
+            url.scheme,
+            url.netloc,
+            url.path,
+            urllib.parse.urlencode(query, doseq=True),
+            url.fragment,
+        )
+    )

@@ -2,9 +2,9 @@ import os
 import ssl
 from typing import TypedDict
 import urllib.request
+import urllib.parse
 
 import certifi
-import hyperlink
 
 
 class SavedImage(TypedDict):
@@ -22,8 +22,8 @@ def download_cover_image(image_url: str) -> SavedImage:
     os.makedirs("covers", exist_ok=True)
 
     try:
-        isbn = hyperlink.parse(image_url).get("ISBN")[0]
-        assert isinstance(isbn, str)
+        query = urllib.parse.urlsplit(image_url).query
+        isbn = urllib.parse.parse_qs(query).get("ISBN", [])[0]
 
         existing_image = next(p for p in os.listdir("covers") if p.startswith(isbn))
         return {"url": image_url, "path": os.path.join("covers", existing_image)}
@@ -36,7 +36,7 @@ def download_cover_image(image_url: str) -> SavedImage:
     req.add_header("User-Agent", "alexwlchan <alex@alexwlchan.net>")
 
     with urllib.request.urlopen(req, context=ssl_context) as resp:
-        filename = hyperlink.parse(resp.geturl()).path[-1]
+        filename = os.path.basename(urllib.parse.urlsplit(resp.geturl()).path)
         image_data = resp.read()
         resp.close()
 
