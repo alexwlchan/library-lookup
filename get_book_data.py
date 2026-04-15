@@ -6,8 +6,7 @@ import functools
 import json
 import os
 import sys
-import typing
-
+from typing import TypedDict
 
 import bs4
 import certifi
@@ -27,12 +26,12 @@ from library_lookup.parsers import (
 )
 
 
-class DefaultList(typing.TypedDict):
+class DefaultList(TypedDict):
     count: int
     url: str
 
 
-class FieldsetInfo(typing.TypedDict):
+class FieldsetInfo(TypedDict):
     title: str
     record_details: RecordDetails
     image: SavedImage

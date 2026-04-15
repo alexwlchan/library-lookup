@@ -1,13 +1,13 @@
 import os
 import ssl
-import typing
+from typing import TypedDict
 import urllib.request
 
 import certifi
 import hyperlink
 
 
-class SavedImage(typing.TypedDict):
+class SavedImage(TypedDict):
     url: str
     path: str | None
 

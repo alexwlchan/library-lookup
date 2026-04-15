@@ -1,11 +1,11 @@
 import re
-import typing
+from typing import cast, TypeAlias, TypedDict
 
 import bs4
 import hyperlink
 
 
-class AvailabilityInfo(typing.TypedDict):
+class AvailabilityInfo(TypedDict):
     location: str
     collection: str
     status: str
@@ -39,7 +39,7 @@ def parse_availability_info(soup: bs4.BeautifulSoup) -> list[AvailabilityInfo]:
             for key, caption in fields
         }
 
-        info: AvailabilityInfo = typing.cast(
+        info: AvailabilityInfo = cast(
             AvailabilityInfo,
             {key: elem.text if elem else "" for key, elem in elements.items()},
         )
@@ -49,7 +49,7 @@ def parse_availability_info(soup: bs4.BeautifulSoup) -> list[AvailabilityInfo]:
     return availability
 
 
-RecordDetails: typing.TypeAlias = dict[str, str | list[str]]
+RecordDetails: TypeAlias = dict[str, str | list[str]]
 
 
 def parse_record_details(soup: bs4.BeautifulSoup, *, url: str) -> RecordDetails:
@@ -170,6 +170,7 @@ def get_cover_image_url(img_elem: bs4.Tag) -> str:
 
     """
     image_url = img_elem.attrs["longdesc"]
+
     url = hyperlink.parse(image_url)
 
     # By default the library website returns a small image, but we can futz
