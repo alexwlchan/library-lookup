@@ -1,4 +1,7 @@
 #!/usr/bin/env python3
+"""
+Crawl the library website to retrieve information about my saved books.
+"""
 
 from collections.abc import Iterable
 import datetime
@@ -27,11 +30,20 @@ from library_lookup.parsers import (
 
 
 class DefaultList(TypedDict):
+    """
+    Information about my "default list", a list of books I've saved on
+    the online library catalogue.
+    """
+
     count: int
     url: str
 
 
 class FieldsetInfo(TypedDict):
+    """
+    Information about a "fieldset", a book on my "to read" list.
+    """
+
     title: str
     record_details: RecordDetails
     image: SavedImage
@@ -41,7 +53,14 @@ class FieldsetInfo(TypedDict):
 
 
 class LibraryBrowser:
+    """
+    A headless browser that interacts with the library website.
+    """
+
     def __init__(self, *, base_url: str, username: str, password: str) -> None:
+        """
+        Set up the browser and log in with my credentials.
+        """
         self.base_url = base_url
         self.browser = mechanize.Browser()
 
@@ -225,14 +244,16 @@ class LibraryBrowser:
             publication_year = "1979"
         elif (
             title
-            == "From hurt to hope : stories of mental health, mental illness and being autistic"
+            == "From hurt to hope : "
+            "stories of mental health, mental illness and being autistic"
             and len(recdetail_spans) == 1
         ):
             author = "Various authors"
             publication_year = "2021"
         elif len(recdetail_spans) != 2:
             print(
-                f'Unexpected data on {title}; could not find two instances of <div class="recdetails">'
+                f"Unexpected data on {title}; "
+                f'could not find two instances of <div class="recdetails">'
             )
             author = None
             publication_year = None

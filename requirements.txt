@@ -22,11 +22,11 @@ markupsafe==3.0.3
     # via jinja2
 mechanize==0.4.10
     # via -r requirements.in
-more-itertools==10.8.0
+more-itertools==11.0.1
     # via
     #   jaraco-classes
     #   jaraco-functools
-pillow==12.1.1
+pillow==12.2.0
     # via -r requirements.in
 six==1.17.0
     # via html5lib

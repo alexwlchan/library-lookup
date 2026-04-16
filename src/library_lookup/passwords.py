@@ -1,3 +1,7 @@
+"""
+Retrieve passwords from the system keychain.
+"""
+
 import keyring
 
 

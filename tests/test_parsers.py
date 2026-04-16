@@ -1,3 +1,7 @@
+"""
+Tests for `library_lookup.parsers`.
+"""
+
 import os
 
 import bs4
@@ -11,12 +15,22 @@ from library_lookup.parsers import (
 
 
 def get_fixture(fixture_name: str) -> bs4.BeautifulSoup:
+    """
+    Read a fixture as BeautifulSoup from `tests/fixtures`.
+    """
     with open(os.path.join("tests/fixtures", fixture_name)) as in_file:
         return bs4.BeautifulSoup(in_file.read(), "html.parser")
 
 
 class TestParseAvailabilityInfo:
+    """
+    Tests for `parse_availability_info`.
+    """
+
     def test_it_gets_missing_info(self) -> None:
+        """
+        If there's no call number, it returns an empty string.
+        """
         soup = get_fixture("availability.html")
 
         assert parse_availability_info(soup) == [
@@ -42,14 +56,24 @@ class TestParseAvailabilityInfo:
 
 
 class TestParseRecordDetails:
+    """
+    Tests for `parse_record_details`.
+    """
+
     def test_it_handles_none(self) -> None:
+        """
+        If there's no summary on the page, it's empty.
+        """
         soup = get_fixture("isbn_9780804692298.html")
 
         actual = parse_record_details(
             soup, url="/cgi-bin/spydus.exe/FULL/WPAC/ALLENQ/347793/70566229,142"
         )
         expected = {
-            "Main title": "Ursula K. Le Guin : voyager to inner lands and to outer space / edited by Joe De Bolt ; with an introduction by Barry N. Malzbert.",
+            "Main title": (
+                "Ursula K. Le Guin : voyager to inner lands and to outer space / "
+                "edited by Joe De Bolt ; with an introduction by Barry N. Malzbert."
+            ),
             "Imprint": "Port Washington ; London : Kennikat Press, 1979.",
             "Collation": "[5],221p. ; 22cm.",
             "ISBN": "9780804692298",
@@ -61,6 +85,10 @@ class TestParseRecordDetails:
         assert actual == expected
 
     def test_it_handles_multiple_entries_for_isbn(self) -> None:
+        """
+        If there are multiple entries for ISBN on the page, it finds all
+        of them.
+        """
         soup = get_fixture("isbn_9781847442260.html")
 
         details = parse_record_details(
@@ -70,10 +98,30 @@ class TestParseRecordDetails:
 
 
 class TestGetUrlOfNextPage:
+    """
+    Tests for `get_url_of_next_page`.
+    """
+
     def test_it_finds_the_next_url(self) -> None:
+        """
+        It finds the link to the next page.
+        """
         soup = bs4.BeautifulSoup(
             """
-            <div class="col col-md text-md-center mt-2 mt-md-0"><nav class="prvnxt result-pages-prvnxt" aria-label="Search results previous and next pages"><ul class="list-inline mb-0"><li class="list-inline-item prv"><span><span class="fas fa-chevron-left mr-2"><span></span></span>Previous<span class="sr-only"> page of search results</span></span></li><li class="list-inline-item nxt"><a href="/cgi-bin/spydus.exe/SET/WPAC/ALLENQ/313828/71369607?NREC=20">Next<span class="sr-only"> page of search results</span><span class="fas fa-chevron-right ml-2"><span></span></span></a></li></ul></nav></div>
+            <div class="col col-md text-md-center mt-2 mt-md-0">
+              <nav class="prvnxt result-pages-prvnxt">
+              <ul class="list-inline mb-0">
+                <li class="list-inline-item prv">
+                  Previous page of search results
+                </li>
+                <li class="list-inline-item nxt">
+                  <a href="/cgi-bin/spydus.exe/SET/WPAC/ALLENQ/313828/71369607?NREC=20">
+                  Next page of search results
+                  </a>
+                </li>
+              </ul>
+              </nav>
+            </div>
             """,
             "html.parser",
         )
@@ -84,9 +132,19 @@ class TestGetUrlOfNextPage:
         )
 
     def test_it_returns_none_on_the_final_page(self) -> None:
+        """
+        If there's no link to the next page, then the next page is None.
+        """
         soup = bs4.BeautifulSoup(
             """
-            <div class="col col-md text-md-center mt-2 mt-md-0"><nav class="prvnxt result-pages-prvnxt" aria-label="Search results previous and next pages"><ul class="list-inline mb-0"><li class="list-inline-item prv"><a href="/cgi-bin/spydus.exe/SET/WPAC/ALLENQ/313828/491841463?NREC=160&amp;NAVDIR=-1"><span class="fas fa-chevron-left mr-2"><span></span></span>Previous<span class="sr-only"> page of search results</span></a></li><li class="list-inline-item nxt"><span>Next<span class="sr-only"> page of search results</span><span class="fas fa-chevron-right ml-2"><span></span></span></span></li></ul></nav></div>
+            <div class="col col-md text-md-center mt-2 mt-md-0">
+              <nav class="prvnxt result-pages-prvnxt">
+                <ul class="list-inline mb-0">
+                <li class="list-inline-item prv">…</li>
+                <li class="list-inline-item nxt">Next page of search results</li>
+                </ul>
+              </nav>
+            </div>
             """,
             "html.parser",
         )
@@ -95,6 +153,9 @@ class TestGetUrlOfNextPage:
 
 
 def test_get_cover_image_url() -> None:
+    """
+    Test that `get_cover_image_url` gets the right URL from an <img> element.
+    """
     soup = bs4.BeautifulSoup(
         """
         <img

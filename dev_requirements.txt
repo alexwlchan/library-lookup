@@ -2,16 +2,10 @@
 #    uv pip compile dev_requirements.in --output-file=dev_requirements.txt --exclude-newer=P7D --exclude-newer-package alexwlchan-chives=false
 -e file:.
     # via -r requirements.txt
-attrs==26.1.0
-    # via interrogate
 beautifulsoup4==4.14.3
     # via -r requirements.txt
 certifi==2026.2.25
     # via -r requirements.txt
-click==8.3.1
-    # via interrogate
-colorama==0.4.6
-    # via interrogate
 coverage==7.13.5
     # via pytest-cov
 html5lib==1.1
@@ -20,8 +14,6 @@ html5lib==1.1
     #   mechanize
 iniconfig==2.3.0
     # via pytest
-interrogate==1.7.0
-    # via -r dev_requirements.in
 jaraco-classes==3.4.0
     # via
     #   -r requirements.txt
@@ -46,12 +38,12 @@ markupsafe==3.0.3
     #   jinja2
 mechanize==0.4.10
     # via -r requirements.txt
-more-itertools==10.8.0
+more-itertools==11.0.1
     # via
     #   -r requirements.txt
     #   jaraco-classes
     #   jaraco-functools
-mypy==1.19.1
+mypy==1.20.0
     # via -r dev_requirements.in
 mypy-extensions==1.1.0
     # via mypy
@@ -59,23 +51,21 @@ packaging==26.0
     # via pytest
 pathspec==1.0.4
     # via mypy
-pillow==12.1.1
+pillow==12.2.0
     # via -r requirements.txt
 pluggy==1.6.0
     # via
     #   pytest
     #   pytest-cov
-py==1.11.0
-    # via interrogate
 pygments==2.20.0
     # via pytest
-pytest==9.0.2
+pytest==9.0.3
     # via
     #   -r dev_requirements.in
     #   pytest-cov
 pytest-cov==7.1.0
     # via -r dev_requirements.in
-ruff==0.15.8
+ruff==0.15.9
     # via -r dev_requirements.in
 six==1.17.0
     # via
@@ -85,8 +75,6 @@ soupsieve==2.8.3
     # via
     #   -r requirements.txt
     #   beautifulsoup4
-tabulate==0.10.0
-    # via interrogate
 tenacity==9.1.4
     # via -r requirements.txt
 titlecase==2.4.1
@@ -95,13 +83,13 @@ tqdm==4.67.3
     # via -r requirements.txt
 types-beautifulsoup4==4.12.0.20250516
     # via -r dev_requirements.in
-types-html5lib==1.1.11.20251117
+types-html5lib==1.1.11.20260408
     # via types-beautifulsoup4
-types-requests==2.33.0.20260327
+types-requests==2.33.0.20260408
     # via types-tqdm
-types-tqdm==4.67.3.20260303
+types-tqdm==4.67.3.20260408
     # via -r dev_requirements.in
-types-webencodings==0.5.0.20251108
+types-webencodings==0.5.0.20260408
     # via types-html5lib
 typing-extensions==4.15.0
     # via

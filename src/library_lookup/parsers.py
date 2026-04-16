@@ -1,3 +1,7 @@
+"""
+Functions for parsing the HTML pages on the library website.
+"""
+
 import re
 from typing import cast, TypeAlias, TypedDict
 import urllib.parse
@@ -6,6 +10,10 @@ import bs4
 
 
 class AvailabilityInfo(TypedDict):
+    """
+    Information about available copies of a book.
+    """
+
     location: str
     collection: str
     status: str
@@ -53,6 +61,9 @@ RecordDetails: TypeAlias = dict[str, str | list[str]]
 
 
 def parse_record_details(soup: bs4.BeautifulSoup, *, url: str) -> RecordDetails:
+    """
+    Parse the "Record details" HTML table.
+    """
     # This is the rough structure of the HTML that renders the
     # "Record details" table (or at least the bits we care about):
     #
@@ -62,7 +73,11 @@ def parse_record_details(soup: bs4.BeautifulSoup, *, url: str) -> RecordDetails:
     #             <span>Main title:</span>
     #           </div>
     #           <div class="col pl-sm-0">
-    #             <span class="d-block"><a href="/cgi-bin/spydus.exe/ENQ/…"><span>A Cuban girl's guide to tea and tomorrow</span></a> / Laura Taylor Namey.</span>
+    #             <span class="d-block">
+    #               <a href="/cgi-bin/spydus.exe/ENQ/…">
+    #                 <span>A Cuban girl's guide to tea and tomorrow</span>
+    #               </a> / Laura Taylor Namey.
+    #             </span>
     #           </div>
     #         </div>
     #         <div class="row">
@@ -131,6 +146,9 @@ def parse_record_details(soup: bs4.BeautifulSoup, *, url: str) -> RecordDetails:
 
 
 def get_url_of_next_page(soup: bs4.BeautifulSoup) -> str | None:
+    """
+    Get the URL for the next page, if there is one.
+    """
     # Now look for a link to the next page, if there is one.
     #
     #     <nav class="prvnxt result-pages-prvnxt">

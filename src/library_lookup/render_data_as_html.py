@@ -1,3 +1,7 @@
+"""
+Functions for rendering the retrieved data as an HTML page.
+"""
+
 import re
 
 

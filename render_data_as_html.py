@@ -1,4 +1,7 @@
 #!/usr/bin/env python3
+"""
+Render the downloaded book data as an HTML page.
+"""
 
 import datetime
 import json
@@ -15,6 +18,9 @@ from tint_colors import choose_tint_color_for_file, from_hex
 
 
 def rgba(hs: str, opacity: float) -> str:
+    """
+    Convert a hex colour to a CSS rgba colour.
+    """
     r, g, b = from_hex(hs)
     return f"rgba({r}, {g}, {b}, {opacity})"
 

@@ -1,3 +1,7 @@
+"""
+Download a cover image from the library website.
+"""
+
 import os
 import ssl
 from typing import TypedDict
@@ -8,6 +12,10 @@ import certifi
 
 
 class SavedImage(TypedDict):
+    """
+    An image which has been saved to disk.
+    """
+
     url: str
     path: str | None
 
@@ -30,6 +38,7 @@ def download_cover_image(image_url: str) -> SavedImage:
     except (IndexError, StopIteration):
         pass
 
+    # TODO(2026-04-16): Use chives.fetch.download_image instead.
     ssl_context = ssl.create_default_context(cafile=certifi.where())
 
     req = urllib.request.Request(image_url)

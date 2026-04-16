@@ -1,18 +1,23 @@
+"""
+Code for choosing a tint colour to be associated with book covers.
+"""
+
 import json
 import subprocess
 
 
 def from_hex(hs: str) -> tuple[int, int, int]:
     """
-    Returns an RGB tuple from a hex string, e.g. #ff0102 -> (255, 1, 2)
+    Return an RGB tuple from a hex string, e.g. #ff0102 -> (255, 1, 2).
     """
     return int(hs[1:3], 16), int(hs[3:5], 16), int(hs[5:7], 16)
 
 
 def choose_tint_color_for_file(path: str) -> str:
     """
-    Returns the tint colour for a file.
+    Return the tint colour for a file.
     """
+    # TODO(2026-04-16): Replace this with `chives.media.get_tint_colour`.
     try:
         with open("colors.json") as infile:
             cached_colors: dict[str, str] = json.load(infile)

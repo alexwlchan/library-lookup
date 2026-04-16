@@ -1,3 +1,7 @@
+"""
+Tests for `library_lookup.parsers`.
+"""
+
 import pytest
 
 from library_lookup.render_data_as_html import display_author_name
@@ -14,4 +18,7 @@ from library_lookup.render_data_as_html import display_author_name
     ],
 )
 def test_display_author_name(label: str, display_label: str) -> None:
+    """
+    Tests for `display_author_name`.
+    """
     assert display_author_name(label) == display_label
